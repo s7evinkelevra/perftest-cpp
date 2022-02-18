@@ -1,0 +1,24 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/mnt/c/Users/Jan/CLionProjects/perftest-cpp/main.cpp
+iostream
+-
+vector
+-
+random
+-
+string
+-
+chrono
+-
+algorithm
+-
+vector
+-
+
