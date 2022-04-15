@@ -3,5 +3,5 @@ project(perftest_cpp)
 
 set(CMAKE_CXX_STANDARD 20)
 
-
+#set(CMAKE_CXX_FLAGS "-O3")
 add_executable(perftest_cpp main.cpp)
