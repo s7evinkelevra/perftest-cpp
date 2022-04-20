@@ -1,0 +1,17 @@
+
+9cpp:S125-"Remove the commented out code.(ğ²ä8 ù’ï‚0
+>cpp:S125;"Remove the commented out code.(İ´˜úÿÿÿÿ8£ù’ï‚0
+A	cpp:S11039"&Remove the misleading "//" characters.(ß–º8şôçî‚0
+G	cpp:S1103:"&Remove the misleading "//" characters.(Ñ‹Ëöÿÿÿÿÿ8õçî‚0
+ 	cpp:S5276U"implicit conversion loses integer precision: 'typename basic_string_view<char>::size_type' (aka 'unsigned long') to 'const int'(Ã»á‹ùÿÿÿÿ8õçî‚0
+9cpp:S125d"Remove the commented out code.(Íî¡8Îù’ï‚0
+9cpp:S125h"Remove the commented out code.(°Ó§â8Ïù’ï‚0
+8	cpp:S1481j"unused variable 'merit'(¾±ÎŠüÿÿÿÿ8®õçî‚0
+L	cpp:S1659"0Define each identifier in a dedicated statement.(½²ş8…“ï‚0
+Rcpp:S886"2Refactor this loop so that it is less error-prone.(ïŒçÙøÿÿÿÿ8àèî‚0
+Q	cpp:S1659"0Define each identifier in a dedicated statement.(¤İ‚õøÿÿÿÿ8…“ï‚0
+Mcpp:S886"2Refactor this loop so that it is less error-prone.(ßÎïà8ãèî‚0
+o	cpp:S2234"NParameters have the same names but not the same order as the method arguments.(ÍÊ¬¶øÿÿÿÿ8æèî‚0
+K	cpp:S5020G"/Replace "rand" with the facilities in <random>.(úãå°8ìèî‚0
+`	cpp:S1854j"?Value stored to 'merit' during its initialization is never read(¾±ÎŠüÿÿÿÿ8äèî‚0
+9cpp:S125l"Remove the commented out code.(ğ¶æü8¡”“ï‚0
