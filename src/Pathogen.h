@@ -9,11 +9,11 @@
 
 class Pathogen {
 public:
-    Pathogen(int pathogenId, double initialFitness, int speciesId, std::string pathogenHaplotype);
+    Pathogen(int pathogenId, double initialFitness, int speciesId, int pathogenHaplotypeId);
     int id;
     double fitness;
     int species;
-    std::string haplotype;
+    int haplotypeId;
 
     void print();
 };

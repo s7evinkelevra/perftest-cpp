@@ -9,7 +9,7 @@
 
 
 
-SimulationEnvironment::SimulationEnvironment(json initialConfig) {
+SimulationEnvironment::SimulationEnvironment(json initialConfig, InfectionRegieme& infectionRegieme) : infectionRegieme(infectionRegieme) {
     config = std::move(initialConfig);
 }
 
@@ -54,7 +54,8 @@ void SimulationEnvironment::initializeHostPool() {
 void SimulationEnvironment::initializePathogenPool() {
     pathogenPool.pathogens.reserve(config["pathogens"]["n"]);
     for(int i = 0; i < config["pathogens"]["n"]; i++){
-        pathogenPool.pathogens.emplace_back(Pathogen(i,1,0, Helper::gen_random(2000)));
+        int randomHaplotypeId = rand() % pathogenAllelePool.alleles.size();
+        pathogenPool.pathogens.emplace_back(Pathogen(i,1,0,randomHaplotypeId));
     }
 
 }
@@ -79,5 +80,8 @@ void SimulationEnvironment::printHost(int index){
 void SimulationEnvironment::printPathogen(int index){
     Pathogen& pathogen = pathogenPool.pathogens[index];
     pathogen.print();
+
+    Allele& haplotype = pathogenAllelePool.alleles[pathogen.haplotypeId];
+    std::cout << "  haplotype id: " << haplotype.id << " -> " << haplotype.sequence << std::endl;
 }
 

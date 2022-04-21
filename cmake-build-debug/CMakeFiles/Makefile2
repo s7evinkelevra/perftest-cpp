@@ -74,12 +74,12 @@ clean: CMakeFiles/perftest_cpp.dir/clean
 CMakeFiles/perftest_cpp.dir/all:
 	$(MAKE) -f CMakeFiles/perftest_cpp.dir/build.make CMakeFiles/perftest_cpp.dir/depend
 	$(MAKE) -f CMakeFiles/perftest_cpp.dir/build.make CMakeFiles/perftest_cpp.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/mnt/c/Users/Jan/CLionProjects/perftest-cpp/cmake-build-debug/CMakeFiles --progress-num=1,2,3,4,5,6,7,8,9,10,11 "Built target perftest_cpp"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/mnt/c/Users/Jan/CLionProjects/perftest-cpp/cmake-build-debug/CMakeFiles --progress-num=1,2,3,4,5,6,7,8,9,10,11,12,13 "Built target perftest_cpp"
 .PHONY : CMakeFiles/perftest_cpp.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/perftest_cpp.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/c/Users/Jan/CLionProjects/perftest-cpp/cmake-build-debug/CMakeFiles 11
+	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/c/Users/Jan/CLionProjects/perftest-cpp/cmake-build-debug/CMakeFiles 13
 	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/perftest_cpp.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/c/Users/Jan/CLionProjects/perftest-cpp/cmake-build-debug/CMakeFiles 0
 .PHONY : CMakeFiles/perftest_cpp.dir/rule

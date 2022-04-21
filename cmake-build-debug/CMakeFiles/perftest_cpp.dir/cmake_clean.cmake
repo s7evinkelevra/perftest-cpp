@@ -5,6 +5,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/perftest_cpp.dir/src/Helper.cpp.o"
   "CMakeFiles/perftest_cpp.dir/src/Host.cpp.o"
   "CMakeFiles/perftest_cpp.dir/src/HostPool.cpp.o"
+  "CMakeFiles/perftest_cpp.dir/src/InfectionRegiemes/InfectionRegieme.cpp.o"
+  "CMakeFiles/perftest_cpp.dir/src/InfectionRegiemes/RandomInfectionRegieme.cpp.o"
   "CMakeFiles/perftest_cpp.dir/src/MeritCache.cpp.o"
   "CMakeFiles/perftest_cpp.dir/src/Pathogen.cpp.o"
   "CMakeFiles/perftest_cpp.dir/src/PathogenPool.cpp.o"

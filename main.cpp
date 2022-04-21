@@ -23,6 +23,7 @@ namespace po = boost::program_options;
 #include "src/AllelePool.h"
 #include "src/Allele.h"
 #include "src/SimulationEnvironment.h"
+#include "src/InfectionRegiemes/RandomInfectionRegieme.h"
 
 
 int main(int argc, char const *argv[]) {
@@ -66,7 +67,11 @@ int main(int argc, char const *argv[]) {
 
     auto pool_init_start = std::chrono::steady_clock::now();
 
-    SimulationEnvironment env(config);
+    RandomInfectionRegieme randomInfectionRegieme;
+
+    SimulationEnvironment env(config, randomInfectionRegieme);
+
+
     env.initializeHostAllelePool();
     env.initializePathogenAllelePool();
 

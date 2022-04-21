@@ -7,13 +7,13 @@
 #include <utility>
 #include <iostream>
 
-Pathogen::Pathogen(int pathogenId, double initialFitness, int speciesId, std::string pathogenHaplotype) {
+Pathogen::Pathogen(int pathogenId, double initialFitness, int speciesId, int pathogenHaplotypeId) {
     id = pathogenId;
     species = speciesId;
     fitness = initialFitness;
-    haplotype = std::move(pathogenHaplotype);
+    haplotypeId = pathogenHaplotypeId;
 }
 
 void Pathogen::print() {
-    std::cout << "Pathogen \nid: " << id << "\nspecies id: " << species << "\nfitness: " << fitness << "\n  haplotype: " << haplotype << std::endl;
+    std::cout << "Pathogen \nid: " << id << "\nspecies id: " << species << "\nfitness: " << fitness << std::endl;
 }
