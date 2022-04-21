@@ -285,59 +285,59 @@ src/HostPool.cpp.s:
 	$(MAKE) -f CMakeFiles/perftest_cpp.dir/build.make CMakeFiles/perftest_cpp.dir/src/HostPool.cpp.s
 .PHONY : src/HostPool.cpp.s
 
-src/InfectionRegiemes/InfectionRegieme.o: src/InfectionRegiemes/InfectionRegieme.cpp.o
+src/InfectionRegiemes/InfectionRegime.o: src/InfectionRegiemes/InfectionRegime.cpp.o
 
-.PHONY : src/InfectionRegiemes/InfectionRegieme.o
-
-# target to build an object file
-src/InfectionRegiemes/InfectionRegieme.cpp.o:
-	$(MAKE) -f CMakeFiles/perftest_cpp.dir/build.make CMakeFiles/perftest_cpp.dir/src/InfectionRegiemes/InfectionRegieme.cpp.o
-.PHONY : src/InfectionRegiemes/InfectionRegieme.cpp.o
-
-src/InfectionRegiemes/InfectionRegieme.i: src/InfectionRegiemes/InfectionRegieme.cpp.i
-
-.PHONY : src/InfectionRegiemes/InfectionRegieme.i
-
-# target to preprocess a source file
-src/InfectionRegiemes/InfectionRegieme.cpp.i:
-	$(MAKE) -f CMakeFiles/perftest_cpp.dir/build.make CMakeFiles/perftest_cpp.dir/src/InfectionRegiemes/InfectionRegieme.cpp.i
-.PHONY : src/InfectionRegiemes/InfectionRegieme.cpp.i
-
-src/InfectionRegiemes/InfectionRegieme.s: src/InfectionRegiemes/InfectionRegieme.cpp.s
-
-.PHONY : src/InfectionRegiemes/InfectionRegieme.s
-
-# target to generate assembly for a file
-src/InfectionRegiemes/InfectionRegieme.cpp.s:
-	$(MAKE) -f CMakeFiles/perftest_cpp.dir/build.make CMakeFiles/perftest_cpp.dir/src/InfectionRegiemes/InfectionRegieme.cpp.s
-.PHONY : src/InfectionRegiemes/InfectionRegieme.cpp.s
-
-src/InfectionRegiemes/RandomInfectionRegieme.o: src/InfectionRegiemes/RandomInfectionRegieme.cpp.o
-
-.PHONY : src/InfectionRegiemes/RandomInfectionRegieme.o
+.PHONY : src/InfectionRegiemes/InfectionRegime.o
 
 # target to build an object file
-src/InfectionRegiemes/RandomInfectionRegieme.cpp.o:
-	$(MAKE) -f CMakeFiles/perftest_cpp.dir/build.make CMakeFiles/perftest_cpp.dir/src/InfectionRegiemes/RandomInfectionRegieme.cpp.o
-.PHONY : src/InfectionRegiemes/RandomInfectionRegieme.cpp.o
+src/InfectionRegiemes/InfectionRegime.cpp.o:
+	$(MAKE) -f CMakeFiles/perftest_cpp.dir/build.make CMakeFiles/perftest_cpp.dir/src/InfectionRegiemes/InfectionRegime.cpp.o
+.PHONY : src/InfectionRegiemes/InfectionRegime.cpp.o
 
-src/InfectionRegiemes/RandomInfectionRegieme.i: src/InfectionRegiemes/RandomInfectionRegieme.cpp.i
+src/InfectionRegiemes/InfectionRegime.i: src/InfectionRegiemes/InfectionRegime.cpp.i
 
-.PHONY : src/InfectionRegiemes/RandomInfectionRegieme.i
+.PHONY : src/InfectionRegiemes/InfectionRegime.i
 
 # target to preprocess a source file
-src/InfectionRegiemes/RandomInfectionRegieme.cpp.i:
-	$(MAKE) -f CMakeFiles/perftest_cpp.dir/build.make CMakeFiles/perftest_cpp.dir/src/InfectionRegiemes/RandomInfectionRegieme.cpp.i
-.PHONY : src/InfectionRegiemes/RandomInfectionRegieme.cpp.i
+src/InfectionRegiemes/InfectionRegime.cpp.i:
+	$(MAKE) -f CMakeFiles/perftest_cpp.dir/build.make CMakeFiles/perftest_cpp.dir/src/InfectionRegiemes/InfectionRegime.cpp.i
+.PHONY : src/InfectionRegiemes/InfectionRegime.cpp.i
 
-src/InfectionRegiemes/RandomInfectionRegieme.s: src/InfectionRegiemes/RandomInfectionRegieme.cpp.s
+src/InfectionRegiemes/InfectionRegime.s: src/InfectionRegiemes/InfectionRegime.cpp.s
 
-.PHONY : src/InfectionRegiemes/RandomInfectionRegieme.s
+.PHONY : src/InfectionRegiemes/InfectionRegime.s
 
 # target to generate assembly for a file
-src/InfectionRegiemes/RandomInfectionRegieme.cpp.s:
-	$(MAKE) -f CMakeFiles/perftest_cpp.dir/build.make CMakeFiles/perftest_cpp.dir/src/InfectionRegiemes/RandomInfectionRegieme.cpp.s
-.PHONY : src/InfectionRegiemes/RandomInfectionRegieme.cpp.s
+src/InfectionRegiemes/InfectionRegime.cpp.s:
+	$(MAKE) -f CMakeFiles/perftest_cpp.dir/build.make CMakeFiles/perftest_cpp.dir/src/InfectionRegiemes/InfectionRegime.cpp.s
+.PHONY : src/InfectionRegiemes/InfectionRegime.cpp.s
+
+src/InfectionRegiemes/RandomInfectionRegime.o: src/InfectionRegiemes/RandomInfectionRegime.cpp.o
+
+.PHONY : src/InfectionRegiemes/RandomInfectionRegime.o
+
+# target to build an object file
+src/InfectionRegiemes/RandomInfectionRegime.cpp.o:
+	$(MAKE) -f CMakeFiles/perftest_cpp.dir/build.make CMakeFiles/perftest_cpp.dir/src/InfectionRegiemes/RandomInfectionRegime.cpp.o
+.PHONY : src/InfectionRegiemes/RandomInfectionRegime.cpp.o
+
+src/InfectionRegiemes/RandomInfectionRegime.i: src/InfectionRegiemes/RandomInfectionRegime.cpp.i
+
+.PHONY : src/InfectionRegiemes/RandomInfectionRegime.i
+
+# target to preprocess a source file
+src/InfectionRegiemes/RandomInfectionRegime.cpp.i:
+	$(MAKE) -f CMakeFiles/perftest_cpp.dir/build.make CMakeFiles/perftest_cpp.dir/src/InfectionRegiemes/RandomInfectionRegime.cpp.i
+.PHONY : src/InfectionRegiemes/RandomInfectionRegime.cpp.i
+
+src/InfectionRegiemes/RandomInfectionRegime.s: src/InfectionRegiemes/RandomInfectionRegime.cpp.s
+
+.PHONY : src/InfectionRegiemes/RandomInfectionRegime.s
+
+# target to generate assembly for a file
+src/InfectionRegiemes/RandomInfectionRegime.cpp.s:
+	$(MAKE) -f CMakeFiles/perftest_cpp.dir/build.make CMakeFiles/perftest_cpp.dir/src/InfectionRegiemes/RandomInfectionRegime.cpp.s
+.PHONY : src/InfectionRegiemes/RandomInfectionRegime.cpp.s
 
 src/MeritCache.o: src/MeritCache.cpp.o
 
@@ -474,12 +474,12 @@ help:
 	@echo "... src/HostPool.o"
 	@echo "... src/HostPool.i"
 	@echo "... src/HostPool.s"
-	@echo "... src/InfectionRegiemes/InfectionRegieme.o"
-	@echo "... src/InfectionRegiemes/InfectionRegieme.i"
-	@echo "... src/InfectionRegiemes/InfectionRegieme.s"
-	@echo "... src/InfectionRegiemes/RandomInfectionRegieme.o"
-	@echo "... src/InfectionRegiemes/RandomInfectionRegieme.i"
-	@echo "... src/InfectionRegiemes/RandomInfectionRegieme.s"
+	@echo "... src/InfectionRegiemes/InfectionRegime.o"
+	@echo "... src/InfectionRegiemes/InfectionRegime.i"
+	@echo "... src/InfectionRegiemes/InfectionRegime.s"
+	@echo "... src/InfectionRegiemes/RandomInfectionRegime.o"
+	@echo "... src/InfectionRegiemes/RandomInfectionRegime.i"
+	@echo "... src/InfectionRegiemes/RandomInfectionRegime.s"
 	@echo "... src/MeritCache.o"
 	@echo "... src/MeritCache.i"
 	@echo "... src/MeritCache.s"

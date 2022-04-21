@@ -119,16 +119,16 @@
 		<Unit filename="/mnt/c/Users/Jan/CLionProjects/perftest-cpp/src/HostPool.h">
 			<Option target="perftest_cpp"/>
 		</Unit>
-		<Unit filename="/mnt/c/Users/Jan/CLionProjects/perftest-cpp/src/InfectionRegiemes/InfectionRegieme.cpp">
+		<Unit filename="/mnt/c/Users/Jan/CLionProjects/perftest-cpp/src/InfectionRegiemes/InfectionRegime.cpp">
 			<Option target="perftest_cpp"/>
 		</Unit>
-		<Unit filename="/mnt/c/Users/Jan/CLionProjects/perftest-cpp/src/InfectionRegiemes/InfectionRegieme.h">
+		<Unit filename="/mnt/c/Users/Jan/CLionProjects/perftest-cpp/src/InfectionRegiemes/InfectionRegime.h">
 			<Option target="perftest_cpp"/>
 		</Unit>
-		<Unit filename="/mnt/c/Users/Jan/CLionProjects/perftest-cpp/src/InfectionRegiemes/RandomInfectionRegieme.cpp">
+		<Unit filename="/mnt/c/Users/Jan/CLionProjects/perftest-cpp/src/InfectionRegiemes/RandomInfectionRegime.cpp">
 			<Option target="perftest_cpp"/>
 		</Unit>
-		<Unit filename="/mnt/c/Users/Jan/CLionProjects/perftest-cpp/src/InfectionRegiemes/RandomInfectionRegieme.h">
+		<Unit filename="/mnt/c/Users/Jan/CLionProjects/perftest-cpp/src/InfectionRegiemes/RandomInfectionRegime.h">
 			<Option target="perftest_cpp"/>
 		</Unit>
 		<Unit filename="/mnt/c/Users/Jan/CLionProjects/perftest-cpp/src/MeritCache.cpp">

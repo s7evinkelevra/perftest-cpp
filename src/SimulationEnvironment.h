@@ -12,16 +12,16 @@
 #include "AllelePool.h"
 #include "Helper.h"
 #include "MeritCache.h"
-#include "InfectionRegiemes/InfectionRegieme.h"
+#include "InfectionRegiemes/InfectionRegime.h"
 
 #include "nlohmann/json.hpp"
 using json = nlohmann::json;
 
 class SimulationEnvironment {
 private:
-    InfectionRegieme& infectionRegieme;
+    InfectionRegime& infectionRegieme;
 public:
-    SimulationEnvironment(json initialConfig, InfectionRegieme& infectionRegieme);
+    SimulationEnvironment(json initialConfig, InfectionRegime& infectionRegieme);
     json config;
 
     AllelePool hostAllelePool;

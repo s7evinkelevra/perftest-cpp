@@ -2,10 +2,10 @@
 // Created by Jan on 21.04.2022.
 //
 
-#include "InfectionRegieme.h"
+#include "InfectionRegime.h"
 
 #include <iostream>
 
-void InfectionRegieme::testMethod() {
+void InfectionRegime::testMethod() {
     std::cout << "base class implementation" << std::endl;
 }

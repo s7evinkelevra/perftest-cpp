@@ -9,7 +9,7 @@
 
 
 
-SimulationEnvironment::SimulationEnvironment(json initialConfig, InfectionRegieme& infectionRegieme) : infectionRegieme(infectionRegieme) {
+SimulationEnvironment::SimulationEnvironment(json initialConfig, InfectionRegime& infectionRegieme) : infectionRegieme(infectionRegieme) {
     config = std::move(initialConfig);
 }
 
