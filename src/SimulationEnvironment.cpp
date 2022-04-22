@@ -85,3 +85,6 @@ void SimulationEnvironment::printPathogen(int index){
     std::cout << "  haplotype id: " << haplotype.id << " -> " << haplotype.sequence << std::endl;
 }
 
+void SimulationEnvironment::testMethod() {
+    infectionRegieme.testMethod();
+}

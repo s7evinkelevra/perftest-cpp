@@ -8,7 +8,6 @@
 
 class InfectionRegime {
 public:
-    int testInt;
     virtual void testMethod();
 };
 

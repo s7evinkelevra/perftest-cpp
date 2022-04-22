@@ -68,9 +68,7 @@ int main(int argc, char const *argv[]) {
     auto pool_init_start = std::chrono::steady_clock::now();
 
     RandomInfectionRegime randomInfectionRegieme;
-
     SimulationEnvironment env(config, randomInfectionRegieme);
-
 
     env.initializeHostAllelePool();
     env.initializePathogenAllelePool();

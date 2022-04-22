@@ -44,6 +44,7 @@ public:
     void printHost(int index);
     void printPathogen(int index);
 
+    void testMethod();
 
     // stat functions
 

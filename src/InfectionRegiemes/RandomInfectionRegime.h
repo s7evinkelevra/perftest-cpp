@@ -10,6 +10,7 @@
 
 class RandomInfectionRegime : public InfectionRegime {
 public:
+    int testInt;
     virtual void testMethod();
 };
 
