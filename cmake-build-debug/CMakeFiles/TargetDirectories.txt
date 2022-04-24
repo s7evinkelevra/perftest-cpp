@@ -1,3 +1,0 @@
-/mnt/c/Users/Jan/CLionProjects/perftest-cpp/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/mnt/c/Users/Jan/CLionProjects/perftest-cpp/cmake-build-debug/CMakeFiles/edit_cache.dir
-/mnt/c/Users/Jan/CLionProjects/perftest-cpp/cmake-build-debug/CMakeFiles/perftest_cpp.dir

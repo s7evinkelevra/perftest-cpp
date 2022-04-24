@@ -1,6 +1,0 @@
-# ninja log v5
-5	1604	6668859126581483	CMakeFiles/perftest_cpp.dir/main.cpp.obj	1b7aa459606e6ad0
-2	255	6668860235883650	build.ninja	3dfab5404ca43a43
-1604	1805	6668859128561491	perftest_cpp.exe	ccf3b0ff0d1ba04a
-4	1890	6668860520336399	CMakeFiles/perftest_cpp.dir/main.cpp.obj	de3a078f38619904
-1891	2310	6668860524457855	perftest_cpp.exe	c6fe3a90fbb870ec
