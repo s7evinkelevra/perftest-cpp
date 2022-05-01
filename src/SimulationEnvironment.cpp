@@ -11,6 +11,7 @@
 
 SimulationEnvironment::SimulationEnvironment(json initialConfig, InfectionRegime& infectionRegieme) : infectionRegieme(infectionRegieme) {
     config = std::move(initialConfig);
+    generation = 0;
 }
 
 void SimulationEnvironment::initializeHostAllelePool() {
@@ -87,4 +88,21 @@ void SimulationEnvironment::printPathogen(int index){
 
 void SimulationEnvironment::testMethod() {
     infectionRegieme.testMethod();
+}
+
+void SimulationEnvironment::initialize() {
+    initializeHostAllelePool();
+    initializePathogenAllelePool();
+
+    initializeMeritCache();
+
+    initializeHostPool();
+    initializePathogenPool();
+}
+
+// implement single simulation step (infection, mutation, reproduction)
+void SimulationEnvironment::step() {
+    infectionRegieme.infect();
+    infectionRegieme.testMethod();
+    generation += 1;
 }

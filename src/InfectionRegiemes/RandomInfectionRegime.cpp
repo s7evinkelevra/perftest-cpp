@@ -9,3 +9,7 @@
 void RandomInfectionRegime::testMethod() {
     std::cout << "derived class implementation, testint: " << testInt << std::endl;
 }
+
+void RandomInfectionRegime::infect() {
+    std::cout << "random infection regime infecting" << std::endl;
+}

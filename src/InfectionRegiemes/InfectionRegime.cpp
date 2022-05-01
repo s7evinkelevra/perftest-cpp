@@ -9,3 +9,7 @@
 void InfectionRegime::testMethod() {
     std::cout << "base class implementation" << std::endl;
 }
+
+void InfectionRegime::infect() {
+    std::cout << "base class infect" << std::endl;
+}

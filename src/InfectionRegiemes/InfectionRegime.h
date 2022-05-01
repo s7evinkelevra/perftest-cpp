@@ -9,6 +9,7 @@
 class InfectionRegime {
 public:
     virtual void testMethod();
+    virtual void infect() = 0;
 };
 
 

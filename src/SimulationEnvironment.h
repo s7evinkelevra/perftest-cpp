@@ -20,25 +20,35 @@ using json = nlohmann::json;
 class SimulationEnvironment {
 private:
     InfectionRegime& infectionRegieme;
+
+    void initializeHostAllelePool();
+    void initializePathogenAllelePool();
+    void initializeMeritCache();
+    void initializeHostPool();
+    void initializePathogenPool();
+
 public:
     SimulationEnvironment(json initialConfig, InfectionRegime& infectionRegieme);
     json config;
+    //TODO(JAN): dont forget to use these member vars
+    int generation;
+    int pathogenGeneration;
+    bool bInfection;
+    bool bHostMutation;
+    bool bPathogenMutation;
+    bool bReproduction;
 
     AllelePool hostAllelePool;
     AllelePool pathogenAllelePool;
 
-    void initializeHostAllelePool();
-    void initializePathogenAllelePool();
-
+    //TODO(JAN): control access through getter/setter
     MeritCache meritCache;
-
-    void initializeMeritCache();
 
     HostPool hostPool;
     PathogenPool pathogenPool;
 
-    void initializeHostPool();
-    void initializePathogenPool();
+
+    void initialize();
 
     // stringify host
     void printHost(int index);
@@ -48,6 +58,9 @@ public:
 
     // stat functions
 
+
+    // simulation
+    void step();
 
 };
 

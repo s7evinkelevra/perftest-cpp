@@ -11,9 +11,6 @@
 #include <boost/program_options.hpp>
 
 #include "src/nlohmann/json.hpp"
-using json = nlohmann::json;
-
-namespace po = boost::program_options;
 
 #include "src/Host.h"
 #include "src/HostPool.h"
@@ -25,6 +22,12 @@ namespace po = boost::program_options;
 #include "src/SimulationEnvironment.h"
 #include "src/InfectionRegiemes/RandomInfectionRegime.h"
 
+using json = nlohmann::json;
+
+namespace po = boost::program_options;
+
+
+
 
 int main(int argc, char const *argv[]) {
     std::string configPath;
@@ -32,8 +35,8 @@ int main(int argc, char const *argv[]) {
     // setup command line arguments
     po::options_description desc("Allowed options");
     desc.add_options()
-        ("help", "produce help message")
-        ("config-file,C", po::value<std::string>(&configPath), "path to the config file");
+        ("help,h", "produce help message")
+        ("config-file,c", po::value<std::string>(&configPath), "path to the config file");
 
     po::variables_map vm;
     po::store(po::parse_command_line(argc, argv, desc), vm);
@@ -67,16 +70,26 @@ int main(int argc, char const *argv[]) {
 
     auto pool_init_start = std::chrono::steady_clock::now();
 
-    RandomInfectionRegime randomInfectionRegieme;
-    SimulationEnvironment env(config, randomInfectionRegieme);
 
-    env.initializeHostAllelePool();
-    env.initializePathogenAllelePool();
+    //TODO(JAN): smart pointer statt referenzen
+    // config polymorphism -> instantiate object based on config
+    // create shared ptr and pass that to the simulation env
+    /*
+    std::shared_ptr<InfectionRegime> infectionRegime;
+    if(config["regime"] == "random"){
+        infectionRegime = std::make_shared<RandomInfectionRegime>();
+    }
+    */
 
-    env.initializeMeritCache();
+    RandomInfectionRegime randomInfectionRegime;
+    SimulationEnvironment env(config, randomInfectionRegime);
+    env.initialize();
 
-    env.initializeHostPool();
-    env.initializePathogenPool();
+    auto pool_init_end = std::chrono::steady_clock::now();
+
+    std::cout << "pool init time: "
+              << std::chrono::duration_cast<std::chrono::milliseconds>(pool_init_end - pool_init_start).count()
+              << " ms" << std::endl;
 
     // sanity check
     int randomHostIndex = rand() % env.hostPool.hosts.size();
@@ -86,27 +99,9 @@ int main(int argc, char const *argv[]) {
     env.printPathogen(randomPathogenIndex);
 
 
-    auto pool_init_end = std::chrono::steady_clock::now();
-
-    std::cout << "pool init time: "
-              << std::chrono::duration_cast<std::chrono::milliseconds>(pool_init_end - pool_init_start).count()
-              << " ms" << std::endl;
-
     auto simulation_start = std::chrono::steady_clock::now();
 
-    for(int i = 0; i < 22500; i++) {
-        //auto start_merit = std::chrono::steady_clock::now();
-        const std::string allele_test = Helper::gen_random(9);
-        const std::string haplotype_test = Helper::gen_random(2000);
-
-        //auto result = edit_distance(allele_test, haplotype_test);
-
-        const int merit = Helper::generate_merit(allele_test, haplotype_test);
-
-        //auto end_merit = std::chrono::steady_clock::now();
-        //std::cout << allele_test << " - " << haplotype_test << std::endl;
-        //std::cout << "merit: " << merit << std::endl << "time: " << std::chrono::duration_cast<std::chrono::milliseconds>(end_merit - start_merit).count() << std::endl;
-    }
+    env.step();
 
     auto simulation_end = std::chrono::steady_clock::now();
 

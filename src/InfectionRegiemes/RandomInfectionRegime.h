@@ -11,7 +11,8 @@
 class RandomInfectionRegime : public InfectionRegime {
 public:
     int testInt;
-    virtual void testMethod();
+    void testMethod() override;
+    void infect() override;
 };
 
 
