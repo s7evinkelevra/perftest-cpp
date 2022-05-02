@@ -115,7 +115,7 @@ int main(int argc, char const *argv[]) {
     std::cout << "haplotype verification " << haplotype.sequence << std::endl;
 
     const int allele_1_ht_merit = Helper::generate_merit(allele_1.sequence, haplotype.sequence);
-    const int allele_1_ht_cached_merit = env.meritCache.cache[randomHost.species * allele_1_id][randomPathogen.species * haplotype_id];
+    const int allele_1_ht_cached_merit = env.meritCache.get(0, allele_1_id, 0, haplotype_id);
 
     std::cout << "allele 1 <-> haplotype merit: " << allele_1_ht_merit << std::endl;
     std::cout << "allele 1 <-> haplotype merit (cached): " << allele_1_ht_cached_merit << std::endl;

@@ -8,9 +8,16 @@
 #include <deque>
 #include <vector>
 
+#include <unordered_map>
+#include <string>
+
 class MeritCache {
 public:
-    std::deque<std::deque<int>> cache;
+    std::unordered_map<std::string, int> cache;
+    void set(int host_species_id, int host_allele_id, int patho_species_id, int patho_allele_id, int value);
+    int get(int host_species_id, int host_allele_id, int patho_species_id, int patho_allele_id);
+
+    static std::string keyFromIds(int host_species_id, int host_allele_id, int patho_species_id, int patho_haplotype_id);
 };
 
 
