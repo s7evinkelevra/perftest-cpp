@@ -6,6 +6,7 @@
 #define PERFTEST_CPP_MERITCACHE_H
 
 #include <deque>
+#include <vector>
 
 class MeritCache {
 public:

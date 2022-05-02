@@ -35,13 +35,17 @@ void SimulationEnvironment::initializePathogenAllelePool() {
 }
 
 void SimulationEnvironment::initializeMeritCache() {
-    for( auto &hostAllele : hostAllelePool.alleles ){
-        std::deque<int> row;
-        for( auto &pathogenAllele : pathogenAllelePool.alleles ) {
-            int levDistance = Helper::generate_merit(hostAllele.sequence, pathogenAllele.sequence);
-            row.push_back(levDistance);
+    for( int host_species_i = 0; host_species_i < config["hosts"]["species_n"]; host_species_i++ ){
+        for( auto &hostAllele : hostAllelePool.alleles[host_species_i] ){
+            std::deque<int> row;
+            for( int patho_species_i = 0; patho_species_i < config["pathogens"]["species_n"]; patho_species_i++ ){
+                for( auto &pathogenAllele : pathogenAllelePool.alleles[patho_species_i] ) {
+                    int levDistance = Helper::generate_merit(hostAllele.sequence, pathogenAllele.sequence);
+                    row.push_back(levDistance);
+                }
+            }
+            meritCache.cache.push_back(row);
         }
-        meritCache.cache.push_back(row);
     }
 };
 
@@ -71,7 +75,6 @@ void SimulationEnvironment::initializePathogenPool() {
             pathogenPool.pathogens[species_i].emplace_back(Pathogen(i,1,species_i,randomHaplotypeId));
         }
     }
-
 }
 
 void SimulationEnvironment::printHost(int species, int index){

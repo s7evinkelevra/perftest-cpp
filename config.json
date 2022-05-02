@@ -5,7 +5,7 @@
   "hosts": {
     "n": 10000,
     "species_n": 2,
-    "alleles_per_species_initial": 150,
+    "alleles_per_species_initial": 75,
     "allele_sequence_length": 9,
     "genes_per_chromosome_initial": 1,
     "mutation_rate_per_nucleotide": 0.0001
@@ -13,7 +13,7 @@
   "pathogens": {
     "n": 10000,
     "species_n":2,
-    "haplotypes_per_species_initial": 10,
+    "haplotypes_per_species_initial": 75,
     "haplotype_sequence_length": 2000,
     "mutation_rate_per_nucleotide": 0.001
   }

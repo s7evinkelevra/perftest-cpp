@@ -112,6 +112,13 @@ int main(int argc, char const *argv[]) {
     const int haplotype_id = randomPathogen.haplotypeId;
     const Allele& haplotype = env.pathogenAllelePool.alleles[0][haplotype_id];
 
+    std::cout << "haplotype verification " << haplotype.sequence << std::endl;
+
+    const int allele_1_ht_merit = Helper::generate_merit(allele_1.sequence, haplotype.sequence);
+    const int allele_1_ht_cached_merit = env.meritCache.cache[randomHost.species * allele_1_id][randomPathogen.species * haplotype_id];
+
+    std::cout << "allele 1 <-> haplotype merit: " << allele_1_ht_merit << std::endl;
+    std::cout << "allele 1 <-> haplotype merit (cached): " << allele_1_ht_cached_merit << std::endl;
 
     auto simulation_start = std::chrono::steady_clock::now();
 
