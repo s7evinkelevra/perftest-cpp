@@ -51,8 +51,8 @@ public:
     void initialize();
 
     // stringify host
-    void printHost(int index);
-    void printPathogen(int index);
+    void printHost(int species, int index);
+    void printPathogen(int species, int index);
 
     void testMethod();
 

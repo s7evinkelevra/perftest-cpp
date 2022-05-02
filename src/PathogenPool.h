@@ -10,8 +10,7 @@
 
 class PathogenPool {
 public:
-    std::vector<Pathogen> pathogens;
-
+    std::vector<std::vector<Pathogen>> pathogens;
 };
 
 

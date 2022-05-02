@@ -13,7 +13,7 @@ class HostPool {
 public:
 /*    HostPool(int hostPoolSize);
     virtual ~HostPool();*/
-    std::vector<Host> hosts;
+    std::vector<std::vector<Host>> hosts;
 };
 
 

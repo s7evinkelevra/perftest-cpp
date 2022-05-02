@@ -92,11 +92,25 @@ int main(int argc, char const *argv[]) {
               << " ms" << std::endl;
 
     // sanity check
-    int randomHostIndex = rand() % env.hostPool.hosts.size();
-    env.printHost(randomHostIndex);
+    int randomHostIndex = rand() % env.hostPool.hosts[0].size();
+    env.printHost(0, randomHostIndex);
 
-    int randomPathogenIndex = rand() % env.pathogenPool.pathogens.size();
-    env.printPathogen(randomPathogenIndex);
+    const Host& randomHost = env.hostPool.hosts[0][randomHostIndex];
+    int allele_1_id = randomHost.chromosome_1_allele_ids[0];
+    int allele_2_id = randomHost.chromosome_2_allele_ids[0];
+
+    const Allele& allele_1 = env.hostAllelePool.alleles[0][allele_1_id];
+    const Allele& allele_2 = env.hostAllelePool.alleles[0][allele_2_id];
+
+    std::cout << "allele 1 verification: " << allele_1.sequence << std::endl;
+    std::cout << "allele 2 verification: " << allele_2.sequence << std::endl;
+
+    int randomPathogenIndex = rand() % env.pathogenPool.pathogens[0].size();
+    env.printPathogen(0, randomPathogenIndex);
+
+    const Pathogen& randomPathogen = env.pathogenPool.pathogens[0][randomPathogenIndex];
+    const int haplotype_id = randomPathogen.haplotypeId;
+    const Allele& haplotype = env.pathogenAllelePool.alleles[0][haplotype_id];
 
 
     auto simulation_start = std::chrono::steady_clock::now();

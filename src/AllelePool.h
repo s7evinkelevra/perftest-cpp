@@ -10,7 +10,7 @@
 
 class AllelePool {
 public:
-    std::vector<Allele> alleles;
+    std::vector<std::vector<Allele>> alleles;
 };
 
 
