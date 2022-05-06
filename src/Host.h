@@ -17,6 +17,9 @@ public:
     std::vector<int> chromosome_1_allele_ids;
     std::vector<int> chromosome_2_allele_ids;
 
+    int antigen_presentation_count;
+    int no_antigen_presentation_count;
+
     void print();
 };
 
