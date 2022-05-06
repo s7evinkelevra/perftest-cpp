@@ -17,6 +17,11 @@ public:
     void set(int host_species_id, int host_allele_id, int patho_species_id, int patho_allele_id, int value);
     int get(int host_species_id, int host_allele_id, int patho_species_id, int patho_allele_id);
 
+    float getAverage();
+    std::unordered_map<int, int> getDistribution();
+    int getLowest();
+    int getHighest();
+
     static std::string keyFromIds(int host_species_id, int host_allele_id, int patho_species_id, int patho_haplotype_id);
 };
 
