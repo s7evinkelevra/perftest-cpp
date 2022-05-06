@@ -8,8 +8,14 @@
 
 #include "InfectionRegime.h"
 
+#include <utility>
+#include <iostream>
+
 class RandomInfectionRegime : public InfectionRegime {
 public:
+    RandomInfectionRegime(json initialConfig) : InfectionRegime(std::move(initialConfig)) {
+        testInt = 0;
+    };
     int testInt;
     void testMethod() override;
     void infect() override;

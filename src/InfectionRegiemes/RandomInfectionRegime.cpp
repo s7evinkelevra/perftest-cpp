@@ -11,5 +11,6 @@ void RandomInfectionRegime::testMethod() {
 }
 
 void RandomInfectionRegime::infect() {
+    std::cout << "testing config access (host count): " << config["hosts"]["n"] << std::endl;
     std::cout << "random infection regime infecting" << std::endl;
 }
