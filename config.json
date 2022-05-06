@@ -2,19 +2,24 @@
   "configId": 0,
   "generations": 10000,
   "burnin_generations": 500,
+  "aminoacids": "ACDEFGHIKLMNOPQRSTUVWY",
   "hosts": {
     "n": 10000,
     "species_n": 2,
     "alleles_per_species_initial": 75,
     "allele_sequence_length": 9,
     "genes_per_chromosome_initial": 1,
-    "mutation_rate_per_nucleotide": 0.0001
+    "mutation_rate_per_peptide": 0.000003
   },
   "pathogens": {
     "n": 10000,
     "species_n":2,
-    "haplotypes_per_species_initial": 75,
+    "haplotypes_per_species_initial": 2,
     "haplotype_sequence_length": 2000,
-    "mutation_rate_per_nucleotide": 0.001
+    "mutation_rate_per_peptide": 0.00003
+  },
+  "infection": {
+    "infections_per_generation": 10,
+    "merit_threshold": 4
   }
 }
