@@ -12,8 +12,11 @@ Pathogen::Pathogen(int pathogenId, double initialFitness, int speciesId, int pat
     species = speciesId;
     fitness = initialFitness;
     haplotypeId = pathogenHaplotypeId;
+
+    infection_count = 0;
+    no_infection_count = 0;
 }
 
 void Pathogen::print() {
-    std::cout << "Pathogen \nid: " << id << "\nspecies id: " << species << "\nfitness: " << fitness << std::endl;
+    std::cout << "Pathogen \nid: " << id << "\nspecies id: " << species << "\nfitness: " << fitness << "\ninfection count: " << infection_count << "\nno infection count: " << no_infection_count << std::endl;
 }

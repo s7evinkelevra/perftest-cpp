@@ -15,6 +15,9 @@ public:
     int species;
     int haplotypeId;
 
+    int infection_count;
+    int no_infection_count;
+
     void print();
 };
 
