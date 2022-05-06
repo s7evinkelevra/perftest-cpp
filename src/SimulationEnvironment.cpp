@@ -6,12 +6,18 @@
 
 #include <iostream>
 #include <utility>
-
+#include <random>
+#include <chrono>
 
 
 SimulationEnvironment::SimulationEnvironment(json initialConfig, InfectionRegime& infectionRegieme) : infectionRegieme(infectionRegieme) {
     config = std::move(initialConfig);
     generation = 0;
+
+    // init random number generator
+    uint64_t timeSeed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
+    std::seed_seq ss{uint32_t(timeSeed & 0xffffffff), uint32_t(timeSeed>>32)};
+    rng.seed(ss);
 }
 
 void SimulationEnvironment::initializeHostAllelePool() {

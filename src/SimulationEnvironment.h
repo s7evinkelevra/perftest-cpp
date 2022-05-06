@@ -19,6 +19,7 @@ using json = nlohmann::json;
 
 class SimulationEnvironment {
 private:
+    std::mt19937_64 rng;
     InfectionRegime& infectionRegieme;
 
     void initializeHostAllelePool();
