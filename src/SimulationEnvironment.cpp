@@ -126,3 +126,39 @@ void SimulationEnvironment::step() {
     infectionRegieme.testMethod();
     generation += 1;
 }
+
+int SimulationEnvironment::addHostAllele(int host_species_id, const std::string& sequence) {
+    int newAlleleId = hostAllelePool.addAllele(host_species_id, sequence);
+
+    for(int patho_species_id = 0; patho_species_id < config["pathogens"]["species_n"]; patho_species_id++){
+        for(Allele& haplotype : pathogenAllelePool.alleles[patho_species_id]){
+            int levDist = Helper::generate_merit(sequence, haplotype.sequence);
+            meritCache.set(host_species_id, newAlleleId, patho_species_id, haplotype.id, levDist);
+        }
+    }
+    return newAlleleId;
+}
+
+int SimulationEnvironment::addPathogenAllele(int patho_species_id, const std::string& sequence) {
+    int newAlleleId = pathogenAllelePool.addAllele(patho_species_id, sequence);
+
+    for(int host_species_id = 0; host_species_id < config["pathogens"]["species_n"]; host_species_id++){
+        for(Allele& allele : hostAllelePool.alleles[host_species_id]){
+            int levDist = Helper::generate_merit(sequence, allele.sequence);
+            meritCache.set(host_species_id, newAlleleId, host_species_id, allele.id, levDist);
+        }
+    }
+    return newAlleleId;
+}
+
+std::string SimulationEnvironment::generateSequence(int length) {
+    std::string AS = config["aminoacids"];
+    std::string tmp_s;
+    tmp_s.reserve(length);
+
+    for (int i = 0; i < length; ++i) {
+        tmp_s += AS[rand() % (AS.length() - 1)];
+    }
+
+    return tmp_s;
+}

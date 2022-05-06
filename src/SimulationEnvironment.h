@@ -50,6 +50,9 @@ public:
 
 
     void initialize();
+    std::string generateSequence(int length);
+    int addHostAllele(int host_species_id, const std::string& sequence);
+    int addPathogenAllele(int patho_species_id, const std::string& sequence);
 
     // stringify host
     void printHost(int species, int index);
