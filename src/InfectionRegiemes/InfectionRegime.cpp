@@ -5,6 +5,12 @@
 #include "InfectionRegime.h"
 
 #include <iostream>
+#include <utility>
+
+
+InfectionRegime::InfectionRegime(json initialConfig) {
+    config = std::move(initialConfig);
+}
 
 void InfectionRegime::testMethod() {
     std::cout << "base class implementation" << std::endl;
