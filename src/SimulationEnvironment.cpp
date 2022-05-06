@@ -120,11 +120,87 @@ void SimulationEnvironment::initialize() {
     initializePathogenPool();
 }
 
-// implement single simulation step (infection, mutation, reproduction)
+// implement single simulation step
+// this represents a single host generation with n pathogen generations
 void SimulationEnvironment::step() {
     infectionRegieme.infect();
     infectionRegieme.testMethod();
     generation += 1;
+
+    // get distribution of merits of all allele:haplotype combs
+    std::unordered_map<int, int> merit_dist = meritCache.getDistribution();
+    for(auto& item: merit_dist){
+        std::cout << item.first << " : " << item.second << std::endl;
+    }
+
+    // i host generations with j pathogen generations each
+    // each host generation contains
+    //  n pathogen generations
+    //      infection
+    //      reproduction
+    //      mutation
+    //  reproduction
+    //  mutation
+    for(int pathogen_generation = 0; pathogen_generation < config["infection"]["infections_per_generation"]; pathogen_generation++){
+
+        for(int host_species_index = 0; host_species_index < config["hosts"]["species_n"]; host_species_index++){
+            unsigned long host_pop_size = hostPool.hosts[host_species_index].size();
+            for(int host_index = 0; host_index < host_pop_size; host_index++) {
+                Host& selectedHost = hostPool.hosts[host_species_index][host_index];
+
+                for(int patho_species_index = 0; patho_species_index < config["pathogens"]["species_n"]; patho_species_index++){
+                    int selectedPathogenIndex = rand() % pathogenPool.pathogens[patho_species_index].size();
+                    Pathogen& selectedPathogen =  pathogenPool.pathogens[patho_species_index][selectedPathogenIndex];
+
+                    // determine smallest lev distance of all host alleles to the selected pathogen haplotype
+                    int smallest_lev = 99999;
+                    for(const int& allele_id : selectedHost.chromosome_1_allele_ids){
+                        const int lev_dist = meritCache.get(host_species_index, allele_id, patho_species_index, selectedPathogen.haplotypeId);
+                        if(lev_dist < smallest_lev){
+                            smallest_lev = lev_dist;
+                        }
+                    }
+                    for(const int& allele_id : selectedHost.chromosome_2_allele_ids){
+                        const int lev_dist = meritCache.get(host_species_index, allele_id, patho_species_index, selectedPathogen.haplotypeId);
+                        if(lev_dist < smallest_lev){
+                            smallest_lev = lev_dist;
+                        }
+                    }
+                    // lev is lte than the provided threshold, at least one peptide of the pathogens haplotype is successfully presented by at least one mhc allele of the given host on either chromosome
+                    if(smallest_lev <= config["infection"]["threshold"]){
+                        selectedHost.antigen_presentation_count++;
+                        selectedPathogen.no_infection_count++;
+                    }else{
+                        selectedHost.no_antigen_presentation_count++;
+                        selectedPathogen.infection_count++;
+                    }
+
+                }
+            }
+        }
+        // pathogen
+        std::uniform_real_distribution<double> unif(0,1);
+        for(int patho_species_index = 0; patho_species_index < pathogenPool.pathogens.size(); patho_species_index++){
+            for(Pathogen& currentPathogen : pathogenPool.pathogens[patho_species_index]){
+
+                //std::string newSequence = pathogenAllelePool.alleles[patho_species_index][currentPathogen.haplotypeId].sequence;
+
+                //for(int haplotype_position = 0; haplotype_position < config["pathogens"]["haplotype_sequence_length"]; haplotype_position++){
+                    //if(unif(rng) < config["pathogens"]["mutation_rate_per_peptide"]){
+                        // mutate
+                        //std::cout << "mutation occured" << std::endl;
+
+                        //newSequence[haplotype_position] = config["aminoacids"].get<std::string>();
+                        //int newHaplotypeId = addPathogenAllele(patho_species_index);
+
+                    //}
+                //}
+            }
+        }
+        // pathogen reproduction
+
+    }
+
 }
 
 int SimulationEnvironment::addHostAllele(int host_species_id, const std::string& sequence) {
