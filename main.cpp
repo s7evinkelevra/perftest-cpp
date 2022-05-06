@@ -81,7 +81,7 @@ int main(int argc, char const *argv[]) {
     }
     */
 
-    RandomInfectionRegime randomInfectionRegime;
+    RandomInfectionRegime randomInfectionRegime(config);
     SimulationEnvironment env(config, randomInfectionRegime);
     env.initialize();
 
@@ -92,30 +92,32 @@ int main(int argc, char const *argv[]) {
               << " ms" << std::endl;
 
     // sanity check
-    int randomHostIndex = rand() % env.hostPool.hosts[0].size();
-    env.printHost(0, randomHostIndex);
+    int randomHostSpeciesIndex = rand() % env.hostPool.hosts.size();
+    int randomHostIndex = rand() % env.hostPool.hosts[randomHostSpeciesIndex].size();
+    env.printHost(randomHostSpeciesIndex, randomHostIndex);
 
-    const Host& randomHost = env.hostPool.hosts[0][randomHostIndex];
+    Host& randomHost = env.hostPool.hosts[randomHostSpeciesIndex][randomHostIndex];
     int allele_1_id = randomHost.chromosome_1_allele_ids[0];
     int allele_2_id = randomHost.chromosome_2_allele_ids[0];
 
-    const Allele& allele_1 = env.hostAllelePool.alleles[0][allele_1_id];
-    const Allele& allele_2 = env.hostAllelePool.alleles[0][allele_2_id];
+    const Allele& allele_1 = env.hostAllelePool.alleles[randomHostSpeciesIndex][allele_1_id];
+    const Allele& allele_2 = env.hostAllelePool.alleles[randomHostSpeciesIndex][allele_2_id];
 
     std::cout << "allele 1 verification: " << allele_1.sequence << std::endl;
     std::cout << "allele 2 verification: " << allele_2.sequence << std::endl;
 
-    int randomPathogenIndex = rand() % env.pathogenPool.pathogens[0].size();
-    env.printPathogen(0, randomPathogenIndex);
+    int randomPathogenSpeciesIndex = rand() % env.pathogenPool.pathogens.size();
+    int randomPathogenIndex = rand() % env.pathogenPool.pathogens[randomPathogenSpeciesIndex].size();
+    env.printPathogen(randomPathogenSpeciesIndex, randomPathogenIndex);
 
-    const Pathogen& randomPathogen = env.pathogenPool.pathogens[0][randomPathogenIndex];
+    Pathogen& randomPathogen = env.pathogenPool.pathogens[randomPathogenSpeciesIndex][randomPathogenIndex];
     const int haplotype_id = randomPathogen.haplotypeId;
-    const Allele& haplotype = env.pathogenAllelePool.alleles[0][haplotype_id];
+    const Allele& haplotype = env.pathogenAllelePool.alleles[randomPathogenSpeciesIndex][haplotype_id];
 
     std::cout << "haplotype verification " << haplotype.sequence << std::endl;
 
     const int allele_1_ht_merit = Helper::generate_merit(allele_1.sequence, haplotype.sequence);
-    const int allele_1_ht_cached_merit = env.meritCache.get(0, allele_1_id, 0, haplotype_id);
+    const int allele_1_ht_cached_merit = env.meritCache.get(randomHostSpeciesIndex, allele_1_id, randomPathogenSpeciesIndex, haplotype_id);
 
     std::cout << "allele 1 <-> haplotype merit: " << allele_1_ht_merit << std::endl;
     std::cout << "allele 1 <-> haplotype merit (cached): " << allele_1_ht_cached_merit << std::endl;
@@ -123,6 +125,9 @@ int main(int argc, char const *argv[]) {
     auto simulation_start = std::chrono::steady_clock::now();
 
     env.step();
+
+    randomHost.print();
+    randomPathogen.print();
 
     auto simulation_end = std::chrono::steady_clock::now();
 
