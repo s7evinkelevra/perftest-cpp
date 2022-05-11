@@ -167,18 +167,23 @@ void SimulationEnvironment::step() {
                     int smallest_lev = 99999;
                     for(const int& allele_id : selectedHost.chromosome_1_allele_ids){
                         const int lev_dist = meritCache.get(host_species_index, allele_id, patho_species_index, selectedPathogen.haplotypeId);
+                        //std::cout << "lev dist: " << lev_dist << std::endl;
                         if(lev_dist < smallest_lev){
                             smallest_lev = lev_dist;
                         }
                     }
                     for(const int& allele_id : selectedHost.chromosome_2_allele_ids){
                         const int lev_dist = meritCache.get(host_species_index, allele_id, patho_species_index, selectedPathogen.haplotypeId);
+                        //std::cout << "lev dist: " << lev_dist << std::endl;
                         if(lev_dist < smallest_lev){
                             smallest_lev = lev_dist;
                         }
                     }
+                    //std::cout << "smallest found lev: " << smallest_lev << "\n";
+
                     // lev is lte than the provided threshold, at least one peptide of the pathogens haplotype is successfully presented by at least one mhc allele of the given host on either chromosome
-                    if(smallest_lev <= config["infection"]["threshold"]){
+                    if(smallest_lev <= config["infection"]["merit_threshold"]){
+                        //std::cout << "successful presentation!" << std::endl;
                         selectedHost.antigen_presentation_count++;
                         selectedPathogen.no_infection_count++;
                     }else{
