@@ -29,3 +29,11 @@ void Host::print() {
     }
     std::cout << std::endl;*/
 }
+
+void Host::updateFitness() {
+    if(antigen_presentation_count + no_antigen_presentation_count == 0){
+        fitness = 0;
+    }else{
+        fitness = (double)antigen_presentation_count / ((double)antigen_presentation_count + (double)no_antigen_presentation_count);
+    }
+}

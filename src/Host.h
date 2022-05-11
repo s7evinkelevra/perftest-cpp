@@ -20,6 +20,8 @@ public:
     int antigen_presentation_count;
     int no_antigen_presentation_count;
 
+    void updateFitness();
+
     void print();
 };
 

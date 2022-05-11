@@ -18,6 +18,8 @@ public:
     int infection_count;
     int no_infection_count;
 
+    void updateFitness();
+
     void print();
 };
 
