@@ -51,6 +51,8 @@ void SimulationEnvironment::initializeMeritCache() {
 
 void SimulationEnvironment::initializeHostPool() {
     hostPool.hosts.resize(config["hosts"]["species_n"]);
+    hostPool.fitness_sum.resize(config["hosts"]["species_n"]);
+
     for( int species_i = 0; species_i < config["hosts"]["species_n"]; species_i ++) {
         hostPool.hosts[species_i].reserve(config["hosts"]["n"]);
         for( int i = 0; i < config["hosts"]["n"]; i++ ){
@@ -67,7 +69,7 @@ void SimulationEnvironment::initializeHostPool() {
 
 void SimulationEnvironment::initializePathogenPool() {
     pathogenPool.pathogens.resize(config["pathogens"]["species_n"]);
-
+    pathogenPool.fitness_sum.resize(config["pathogens"]["species_n"]);
     for( int species_i = 0; species_i < config["pathogens"]["species_n"]; species_i ++ ){
         pathogenPool.pathogens[species_i].reserve(config["pathogens"]["n"]);
         for( int i = 0; i < config["pathogens"]["n"]; i++ ){
