@@ -127,9 +127,22 @@ void SimulationEnvironment::step() {
 
     // get distribution of merits of all allele:haplotype combs
     std::unordered_map<int, int> merit_dist = meritCache.getDistribution();
+    std::cout << "allele:haplotype merit distribution" << std::endl;
     for(auto& item: merit_dist){
         std::cout << item.first << " : " << item.second << std::endl;
     }
+
+    //std::cout << "count of observed alleles: " << hostPool.getAlleleCounts() << std::endl;
+
+    std::vector<std::unordered_map<int, int>> allele_dists = hostPool.getAlleleDistributions();
+    std::cout << "Host allele distribution" << std::endl;
+    for(auto& dist : allele_dists){
+        for(auto& item : dist){
+            std::cout << item.first << " : " << item.second << std::endl;
+        }
+    }
+
+
 
     // i host generations with j pathogen generations each
     // each host generation contains
