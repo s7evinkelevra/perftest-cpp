@@ -126,10 +126,11 @@ int main(int argc, char const *argv[]) {
 
     env.step();
 
+    auto simulation_end = std::chrono::steady_clock::now();
+
     randomHost.print();
     randomPathogen.print();
 
-    auto simulation_end = std::chrono::steady_clock::now();
 
     std::cout << "Simulation Time: "
          << std::chrono::duration_cast<std::chrono::milliseconds>(simulation_end - simulation_start).count()
