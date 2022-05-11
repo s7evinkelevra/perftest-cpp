@@ -194,7 +194,35 @@ void SimulationEnvironment::step() {
                 }
             }
         }
-        // pathogen
+
+        // calculate fitness of hosts/pathogens and their sums after infection took place
+        hostPool.updateFitness();
+        pathogenPool.updateFitness();
+
+        // pathogen reproduction
+        double dice;
+        int totalTries = 0;
+        for(int patho_species_index = 0; patho_species_index < pathogenPool.pathogens.size(); patho_species_index++){
+            int selectedPathogens = 0;
+            std::cout << "species total fitness: " << pathogenPool.fitness_sum[patho_species_index] << std::endl;
+            while(selectedPathogens < pathogenPool.pathogens[patho_species_index].size()){
+                dice = rng.sampleRealUniDouble(0, pathogenPool.fitness_sum[patho_species_index]);
+
+                for(auto & pathogen : pathogenPool.pathogens[patho_species_index]){
+                    totalTries++;
+                    dice = dice - pathogen.fitness;
+                    if(dice <= 0){
+                        //TODO(JAN): actually implement the reproduction
+                        selectedPathogens++;
+                        break;
+                    }
+                }
+            }
+        }
+
+        std::cout << "total tries: " << totalTries << std::endl;
+
+        // pathogen mutation
         std::uniform_real_distribution<double> unif(0,1);
         for(int patho_species_index = 0; patho_species_index < pathogenPool.pathogens.size(); patho_species_index++){
             for(Pathogen& currentPathogen : pathogenPool.pathogens[patho_species_index]){
@@ -216,6 +244,9 @@ void SimulationEnvironment::step() {
         // pathogen reproduction
 
     }
+
+
+
 
 }
 
