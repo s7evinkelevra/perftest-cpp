@@ -5,7 +5,7 @@
 #ifndef PERFTEST_CPP_SIMULATIONENVIRONMENT_H
 #define PERFTEST_CPP_SIMULATIONENVIRONMENT_H
 
-#include <random>
+#include "Random.h"
 
 #include "HostPool.h"
 #include "PathogenPool.h"
@@ -19,7 +19,7 @@ using json = nlohmann::json;
 
 class SimulationEnvironment {
 private:
-    std::mt19937_64 rng;
+    Random rng;
     InfectionRegime& infectionRegieme;
 
     void initializeHostAllelePool();
