@@ -15,8 +15,18 @@ public:
 /*    HostPool(int hostPoolSize);
     virtual ~HostPool();*/
     std::vector<std::vector<Host>> hosts;
-    std::unordered_map<int, int> getAlleleDist();
-    int getAlleleCount();
+    std::vector<std::unordered_map<int, int>> getAlleleDistributions();
+    std::unordered_map<int, int> getAlleleDistribution(int speciesId);
+
+    std::vector<int> getAlleleCounts();
+    int getAlleleCount(int speciesId);
+
+    std::vector<double> fitness_sum;
+
+    // calculates all the fitness values for each host and saves it to that hosts fitness
+    // also updates the fitness sum for that species
+    void updateFitness();
+
 
 };
 

@@ -11,6 +11,11 @@
 class PathogenPool {
 public:
     std::vector<std::vector<Pathogen>> pathogens;
+
+    // initialized in the simulation environment
+    std::vector<double> fitness_sum;
+    void updateFitness();
+
 };
 
 
