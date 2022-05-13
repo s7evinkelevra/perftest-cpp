@@ -202,6 +202,7 @@ void SimulationEnvironment::step() {
         // pathogen reproduction
         double dice;
         int totalTries = 0;
+        //TODO(JAN): find fast implementation for roulette wheel selection
         for(int patho_species_index = 0; patho_species_index < pathogenPool.pathogens.size(); patho_species_index++){
             int selectedPathogens = 0;
             std::cout << "species total fitness: " << pathogenPool.fitness_sum[patho_species_index] << std::endl;
