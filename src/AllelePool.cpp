@@ -7,7 +7,8 @@
 #include <utility>
 #include "Allele.h"
 
-int AllelePool::addAllele(int species_id, std::string sequence) {
+unsigned long AllelePool::addAllele(int species_id, std::string sequence) {
     unsigned long alleleId = alleles[species_id].size();
     alleles[species_id].push_back(Allele((int)alleleId,std::move(sequence)));
+    return alleleId;
 }
