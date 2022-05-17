@@ -154,13 +154,13 @@ void SimulationEnvironment::step() {
     //  mutation
     for(int pathogen_generation = 0; pathogen_generation < config["infection"]["infections_per_generation"]; pathogen_generation++){
 
-        for(int host_species_index = 0; host_species_index < config["hosts"]["species_n"]; host_species_index++){
+        for(int host_species_index = 0; host_species_index < hostPool.hosts.size(); host_species_index++){
             unsigned long host_pop_size = hostPool.hosts[host_species_index].size();
             for(int host_index = 0; host_index < host_pop_size; host_index++) {
                 Host& selectedHost = hostPool.hosts[host_species_index][host_index];
 
-                for(int patho_species_index = 0; patho_species_index < config["pathogens"]["species_n"]; patho_species_index++){
-                    int selectedPathogenIndex = rand() % pathogenPool.pathogens[patho_species_index].size();
+                for(int patho_species_index = 0; patho_species_index < pathogenPool.pathogens.size(); patho_species_index++){
+                    int selectedPathogenIndex = rng.sampleIntUniUnsignedInt(0,pathogenPool.pathogens[patho_species_index].size());
                     Pathogen& selectedPathogen =  pathogenPool.pathogens[patho_species_index][selectedPathogenIndex];
 
                     // determine smallest lev distance of all host alleles to the selected pathogen haplotype
