@@ -11,7 +11,8 @@
 
 SimulationEnvironment::SimulationEnvironment(json initialConfig, InfectionRegime& infectionRegieme) : infectionRegieme(infectionRegieme) {
     config = std::move(initialConfig);
-    generation = 0;
+    totalHostGenerations = 0;
+    totalPathogenGenerations = 0;
 
     rng = Random();
 }
@@ -123,7 +124,7 @@ void SimulationEnvironment::initialize() {
 void SimulationEnvironment::step() {
     infectionRegieme.infect();
     infectionRegieme.testMethod();
-    generation += 1;
+    totalHostGenerations++;
 
     // get distribution of merits of all allele:haplotype combs
     std::unordered_map<int, int> merit_dist = meritCache.getDistribution();
@@ -153,6 +154,7 @@ void SimulationEnvironment::step() {
     //  reproduction
     //  mutation
     for(int pathogen_generation = 0; pathogen_generation < config["infection"]["infections_per_generation"]; pathogen_generation++){
+        totalPathogenGenerations++;
 
         for(int host_species_index = 0; host_species_index < hostPool.hosts.size(); host_species_index++){
             unsigned long host_pop_size = hostPool.hosts[host_species_index].size();

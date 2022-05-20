@@ -31,9 +31,10 @@ private:
 public:
     SimulationEnvironment(json initialConfig, InfectionRegime& infectionRegieme);
     json config;
+    int totalHostGenerations;
+    int totalPathogenGenerations;
+
     //TODO(JAN): dont forget to use these member vars
-    int generation;
-    int pathogenGeneration;
     bool bInfection;
     bool bHostMutation;
     bool bPathogenMutation;
