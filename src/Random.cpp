@@ -18,6 +18,7 @@ void Random::reseed(unsigned int seed) {
     rng.seed(seed);
 }
 
+// Produces random integer values i, uniformly distributed on the closed interval [a,b]
 unsigned int Random::sampleIntUniUnsignedInt(unsigned int from, unsigned int thru) {
     static std::uniform_int_distribution<unsigned int> d{};
     using parm_t = decltype(d)::param_type;
@@ -40,4 +41,10 @@ float Random::sampleGaussian(float mean, float variance) {
     static std::normal_distribution<float> d{};
     using parm_t = decltype(d)::param_type;
     return d( rng, parm_t{mean, variance} );
+}
+
+int Random::sampleBinomial(int upper, double probability) {
+    static std::binomial_distribution<int> d{};
+    using parm_t = decltype(d)::param_type;
+    return d(rng, parm_t{upper, probability});
 }

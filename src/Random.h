@@ -24,6 +24,9 @@ public:
     // sample gaussian
     float sampleGaussian(float mean, float variance);
 
+    // sample binomial
+    int sampleBinomial(int upper, double probability);
+
 
 
 };
