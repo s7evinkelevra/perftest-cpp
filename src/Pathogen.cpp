@@ -7,18 +7,19 @@
 #include <utility>
 #include <iostream>
 
-Pathogen::Pathogen(int pathogenId, double initialFitness, int speciesId, int pathogenHaplotypeId) {
+Pathogen::Pathogen(int parentId, int pathogenId, double initialFitness, int speciesId, int pathogenHaplotypeId) {
+    parent_id = parentId;
     id = pathogenId;
     species = speciesId;
     fitness = initialFitness;
-    haplotypeId = pathogenHaplotypeId;
+    haplotype_id = pathogenHaplotypeId;
 
     infection_count = 0;
     no_infection_count = 0;
 }
 
 void Pathogen::print() {
-    std::cout << "Pathogen \nid: " << id << "\nspecies id: " << species << "\nfitness: " << fitness << "\ninfection count: " << infection_count << "\nno infection count: " << no_infection_count << std::endl;
+    std::cout << "Pathogen \nid: " << id << "\nparent id:" << parent_id << "\nspecies id: " << species << "\nfitness: " << fitness << "\ninfection count: " << infection_count << "\nno infection count: " << no_infection_count << std::endl;
 }
 
 void Pathogen::updateFitness() {
@@ -27,4 +28,10 @@ void Pathogen::updateFitness() {
     }else{
         fitness = (double)infection_count / ((double)infection_count + (double)no_infection_count);
     }
+}
+
+void Pathogen::resetInfectionCount(int initialFitness) {
+    fitness = initialFitness;
+    infection_count = 0;
+    no_infection_count = 0;
 }

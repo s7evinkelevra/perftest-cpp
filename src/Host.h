@@ -10,7 +10,9 @@
 
 class Host {
 public:
-    Host(int hostId, double initialFitness, int speciesId);
+    Host(int parentId1, int parentId2, int hostId, double initialFitness, int speciesId);
+    int parent_id_1;
+    int parent_id_2;
     int id;
     double fitness;
     int species;
@@ -21,6 +23,7 @@ public:
     int no_antigen_presentation_count;
 
     void updateFitness();
+    void resetAntigenPresentationCount(int initialFitness);
 
     void print();
 };

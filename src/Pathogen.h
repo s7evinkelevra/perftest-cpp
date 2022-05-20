@@ -9,16 +9,18 @@
 
 class Pathogen {
 public:
-    Pathogen(int pathogenId, double initialFitness, int speciesId, int pathogenHaplotypeId);
+    Pathogen(int parentId, int pathogenId, double initialFitness, int speciesId, int pathogenHaplotypeId);
+    int parent_id;
     int id;
     double fitness;
     int species;
-    int haplotypeId;
+    int haplotype_id;
 
     int infection_count;
     int no_infection_count;
 
     void updateFitness();
+    void resetInfectionCount(int initialFitness);
 
     void print();
 };

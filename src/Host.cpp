@@ -5,7 +5,9 @@
 #include <iostream>
 #include "Host.h"
 
-Host::Host(int hostId, double initialFitness, int speciesId) {
+Host::Host(int parentId1, int parentId2, int hostId, double initialFitness, int speciesId) {
+    parent_id_1 = parentId1;
+    parent_id_2 = parentId2;
     id = hostId;
     fitness = initialFitness;
     species = speciesId;
@@ -36,4 +38,10 @@ void Host::updateFitness() {
     }else{
         fitness = (double)antigen_presentation_count / ((double)antigen_presentation_count + (double)no_antigen_presentation_count);
     }
+}
+
+void Host::resetAntigenPresentationCount(int initialFitness) {
+    fitness = initialFitness;
+    antigen_presentation_count = 0;
+    no_antigen_presentation_count = 0;
 }
