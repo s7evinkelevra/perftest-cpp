@@ -53,14 +53,15 @@ void SimulationEnvironment::initializeMeritCache() {
 void SimulationEnvironment::initializeHostPool() {
     hostPool.hosts.resize(config["hosts"]["species_n"]);
     hostPool.fitness_sum.resize(config["hosts"]["species_n"]);
+    int initialFitness = config["hosts"]["initial_fitness"];
 
     for( int species_i = 0; species_i < config["hosts"]["species_n"]; species_i ++) {
         hostPool.hosts[species_i].reserve(config["hosts"]["n"]);
         for( int i = 0; i < config["hosts"]["n"]; i++ ){
-            hostPool.hosts[species_i].emplace_back(Host(i, 1, species_i));
+            hostPool.hosts[species_i].emplace_back(Host(0, 0, i, initialFitness, species_i));
             for(int j = 0; j < config["hosts"]["genes_per_chromosome_initial"]; j++){
-                int randomAlleleId_1 = rand() % hostAllelePool.alleles[species_i].size();
-                int randomAlleleId_2 = rand() % hostAllelePool.alleles[species_i].size();
+                int randomAlleleId_1 = rng.sampleIntUniUnsignedInt(0,hostAllelePool.alleles[species_i].size() - 1);
+                int randomAlleleId_2 = rng.sampleIntUniUnsignedInt(0,hostAllelePool.alleles[species_i].size() - 1);
                 hostPool.hosts[species_i][i].chromosome_1_allele_ids.emplace_back(randomAlleleId_1);
                 hostPool.hosts[species_i][i].chromosome_2_allele_ids.emplace_back(randomAlleleId_2);
             }
@@ -74,8 +75,8 @@ void SimulationEnvironment::initializePathogenPool() {
     for( int species_i = 0; species_i < config["pathogens"]["species_n"]; species_i ++ ){
         pathogenPool.pathogens[species_i].reserve(config["pathogens"]["n"]);
         for( int i = 0; i < config["pathogens"]["n"]; i++ ){
-            int randomHaplotypeId = rand() % pathogenAllelePool.alleles[species_i].size();
-            pathogenPool.pathogens[species_i].emplace_back(Pathogen(i,1,species_i,randomHaplotypeId));
+            int randomHaplotypeId = rng.sampleIntUniUnsignedInt(0, pathogenAllelePool.alleles[species_i].size() - 1);
+            pathogenPool.pathogens[species_i].emplace_back(Pathogen(0,i,initialFitness,species_i,randomHaplotypeId));
         }
     }
 }
@@ -162,7 +163,7 @@ void SimulationEnvironment::step() {
                 Host& selectedHost = hostPool.hosts[host_species_index][host_index];
 
                 for(int patho_species_index = 0; patho_species_index < pathogenPool.pathogens.size(); patho_species_index++){
-                    int selectedPathogenIndex = rng.sampleIntUniUnsignedInt(0,pathogenPool.pathogens[patho_species_index].size());
+                    int selectedPathogenIndex = rng.sampleIntUniUnsignedInt(0,pathogenPool.pathogens[patho_species_index].size() - 1);
                     Pathogen& selectedPathogen =  pathogenPool.pathogens[patho_species_index][selectedPathogenIndex];
 
                     // determine smallest lev distance of all host alleles to the selected pathogen haplotype
