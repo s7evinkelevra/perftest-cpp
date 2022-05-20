@@ -226,31 +226,210 @@ void SimulationEnvironment::step() {
 
         std::cout << "total tries: " << totalTries << std::endl;
 
+
+        // get the allele distribution to skip cache filling for alleles that are not present in the population anymore (and therefore can't at any point in the future, too)
+        std::vector<std::unordered_map<int, int>> host_allele_dist = hostPool.getAlleleDistributions();
+
+
         // pathogen mutation
-        std::uniform_real_distribution<double> unif(0,1);
+        int haplotype_seq_length = config["pathogens"]["haplotype_sequence_length"];
+        double mutation_rate_per_site = config["pathogens"]["mutation_rate_per_peptide"];
+        std::string AS = config["aminoacids"];
         for(int patho_species_index = 0; patho_species_index < pathogenPool.pathogens.size(); patho_species_index++){
             for(Pathogen& currentPathogen : pathogenPool.pathogens[patho_species_index]){
 
-                //std::string newSequence = pathogenAllelePool.alleles[patho_species_index][currentPathogen.haplotypeId].sequence;
+                int mutationCount = rng.sampleBinomial(haplotype_seq_length, mutation_rate_per_site);
+                if(mutationCount == 0) continue;
 
-                //for(int haplotype_position = 0; haplotype_position < config["pathogens"]["haplotype_sequence_length"]; haplotype_position++){
-                    //if(unif(rng) < config["pathogens"]["mutation_rate_per_peptide"]){
-                        // mutate
-                        //std::cout << "mutation occured" << std::endl;
+                std::cout << "mutation in " << currentPathogen.id << "\nold haplotype id: " << currentPathogen.haplotype_id << "\nsequence: " << pathogenAllelePool.alleles[patho_species_index][currentPathogen.haplotype_id].sequence << "\n";
 
-                        //newSequence[haplotype_position] = config["aminoacids"].get<std::string>();
-                        //int newHaplotypeId = addPathogenAllele(patho_species_index);
 
-                    //}
-                //}
+                std::string newSequence = pathogenAllelePool.alleles[patho_species_index][currentPathogen.haplotype_id].sequence;
+
+                for(int mutation_i = 0; mutation_i < mutationCount; mutation_i++){
+                    unsigned int position = rng.sampleIntUniUnsignedInt(0, newSequence.size() - 1);
+                    char newChar = AS[rng.sampleIntUniUnsignedInt(0, AS.size() -1)];
+                    newSequence[position] = newChar;
+                }
+
+                unsigned long newHaplotypeId = pathogenAllelePool.addAllele(patho_species_index, newSequence);
+                currentPathogen.haplotype_id = (int)newHaplotypeId;
+
+
+                std::cout << "new haplotype id: " << newHaplotypeId << "\nnew sequence: " << newSequence << "\n";
+
+                for( int host_species_i = 0; host_species_i < hostAllelePool.alleles.size(); host_species_i++ ){
+                    for( auto &hostAllele : hostAllelePool.alleles[host_species_i] ){
+                        //TODO(JAN): test this
+                        if(host_allele_dist[host_species_i].find(hostAllele.id) != host_allele_dist[host_species_i].end()) continue; // skip this allele if no host actually carries it
+
+                        int levDistance = Helper::generate_merit(hostAllele.sequence, newSequence);
+                        meritCache.set(host_species_i, hostAllele.id, patho_species_index, newHaplotypeId, levDistance);
+                    }
+                }
             }
         }
-        // pathogen reproduction
+    }
 
+    // after n pathogen generations have passed (including n infections)
+    // hosts move on in their lifecycle with reproduction and mutation
+
+    // host reproduction
+    //TODO(JAN): test all this
+    std::cout << "Host reproduction\n";
+
+    // infections are done, update and tally the fitness of the hosts
+    hostPool.updateFitness();
+
+    double dice;
+    int totalTries = 0;
+
+    for(int host_species_index = 0; host_species_index < hostPool.hosts.size(); host_species_index++){
+        int selectedHosts = 0;
+        int selectedParents = 0;
+
+        // create vector of hosts for this species
+        std::vector<Host> nextGenerationHosts;
+        nextGenerationHosts.reserve(hostPool.hosts[host_species_index].size());
+
+        unsigned int hostIdBase = hostPool.hosts[host_species_index].size() * totalHostGenerations;
+
+        std::cout << "species total fitness: " << hostPool.fitness_sum[host_species_index] << std::endl;
+        // need to select double the hosts -> two parents per new host
+        while(selectedParents < hostPool.hosts[host_species_index].size() * 2){
+
+            dice = rng.sampleRealUniDouble(0, hostPool.fitness_sum[host_species_index]);
+
+            // select first parent
+            int parentIndexFirst;
+            for(int host_i = 0; host_i < hostPool.hosts[host_species_index].size(); host_i++){
+                totalTries++;
+                dice = dice - hostPool.hosts[host_species_index][host_i].fitness;
+                if(dice <= 0){
+                    parentIndexFirst = host_i;
+                    selectedParents++;
+                    break;
+                }
+            }
+
+            // select second parent
+            int parentIndexSecond;
+            for(int host_i = 0; host_i < hostPool.hosts[host_species_index].size(); host_i++){
+                totalTries++;
+                dice = dice - hostPool.hosts[host_species_index][host_i].fitness;
+                if(dice <= 0){
+                    parentIndexSecond = host_i;
+                    selectedParents++;
+                    break;
+                }
+            }
+
+            selectedHosts++;
+
+            Host& parentFirst = hostPool.hosts[host_species_index][parentIndexFirst];
+            Host& parentSecond = hostPool.hosts[host_species_index][parentIndexSecond];
+            nextGenerationHosts.emplace_back(Host(parentFirst.id, parentSecond.id, hostIdBase + selectedHosts, config["hosts"]["initial_fitness"], host_species_index));
+            Host& nextGenerationHost = nextGenerationHosts.back();
+
+            if(rng.sampleRealUniFloat(0,1) < 0.5){
+                nextGenerationHost.chromosome_1_allele_ids = parentFirst.chromosome_1_allele_ids;
+            }else{
+                nextGenerationHost.chromosome_1_allele_ids = parentFirst.chromosome_2_allele_ids;
+            }
+
+            if(rng.sampleRealUniFloat(0,1) < 0.5){
+                nextGenerationHost.chromosome_2_allele_ids = parentSecond.chromosome_1_allele_ids;
+            }else{
+                nextGenerationHost.chromosome_2_allele_ids = parentSecond.chromosome_2_allele_ids;
+            }
+
+        }
+
+        hostPool.hosts[host_species_index] = nextGenerationHosts;
+    }
+
+
+    // host mutation
+
+    // get the allele distribution to skip cache filling for alleles that are not present in the population anymore (and therefore can't at any point in the future, too)
+    std::vector<std::unordered_map<int, int>> pathogen_haplotype_dist = pathogenPool.getHaplotypeDistributions();
+
+    int allele_seq_length = config["hosts"]["allele_sequence_length"];
+    double mutation_rate_per_site = config["hosts"]["mutation_rate_per_peptide"];
+    std::string AS = config["aminoacids"];
+    for(int host_species_index = 0; host_species_index < hostPool.hosts.size(); host_species_index++){
+        for(Host& currentHost : hostPool.hosts[host_species_index]){
+
+            for(int& alleleId : currentHost.chromosome_1_allele_ids){
+                int mutationCount = rng.sampleBinomial(allele_seq_length, mutation_rate_per_site);
+                if(mutationCount == 0) continue;
+
+                std::string newSequence = hostAllelePool.alleles[host_species_index][alleleId].sequence;
+
+                std::cout << "mutation in allele: " << alleleId << "\nsequence: " << hostAllelePool.alleles[host_species_index][alleleId].sequence;
+
+                for(int mutation_i = 0; mutation_i < mutationCount; mutation_i++){
+                    unsigned int position = rng.sampleIntUniUnsignedInt(0, newSequence.size() - 1);
+                    char newChar = AS[rng.sampleIntUniUnsignedInt(0, AS.size() -1)];
+                    newSequence[position] = newChar;
+                }
+
+                unsigned long newAlleleId = hostAllelePool.addAllele(host_species_index, newSequence);
+                alleleId = (int)newAlleleId;
+
+
+                std::cout << "new allele id: " << newAlleleId << "\nnew sequence: " << newSequence << "\n";
+
+                for( int pathogen_species_i = 0; pathogen_species_i < pathogenAllelePool.alleles.size(); pathogen_species_i++ ){
+                    for( auto &pathogenHaplotype : pathogenAllelePool.alleles[pathogen_species_i] ){
+                        //TODO(JAN): test this
+                        if(pathogen_haplotype_dist[pathogen_species_i].find(pathogenHaplotype.id) != pathogen_haplotype_dist[pathogen_species_i].end()) continue; // skip this allele if no host actually carries it
+
+                        int levDistance = Helper::generate_merit(pathogenHaplotype.sequence, newSequence);
+                        meritCache.set(host_species_index, newAlleleId, pathogen_species_i, pathogenHaplotype.id, levDistance);
+                    }
+                }
+
+            }
+
+            for(int& alleleId : currentHost.chromosome_2_allele_ids){
+                int mutationCount = rng.sampleBinomial(allele_seq_length, mutation_rate_per_site);
+                if(mutationCount == 0) continue;
+
+                std::string newSequence = hostAllelePool.alleles[host_species_index][alleleId].sequence;
+
+                std::cout << "mutation in allele: " << alleleId << "\nsequence: " << hostAllelePool.alleles[host_species_index][alleleId].sequence;
+
+                for(int mutation_i = 0; mutation_i < mutationCount; mutation_i++){
+                    unsigned int position = rng.sampleIntUniUnsignedInt(0, newSequence.size() - 1);
+                    char newChar = AS[rng.sampleIntUniUnsignedInt(0, AS.size() -1)];
+                    newSequence[position] = newChar;
+                }
+
+                unsigned long newAlleleId = hostAllelePool.addAllele(host_species_index, newSequence);
+                alleleId = (int)newAlleleId;
+
+
+                std::cout << "new allele id: " << newAlleleId << "\nnew sequence: " << newSequence << "\n";
+
+                for( int pathogen_species_i = 0; pathogen_species_i < pathogenAllelePool.alleles.size(); pathogen_species_i++ ){
+                    for( auto &pathogenHaplotype : pathogenAllelePool.alleles[pathogen_species_i] ){
+                        //TODO(JAN): test this
+                        if(pathogen_haplotype_dist[pathogen_species_i].find(pathogenHaplotype.id) != pathogen_haplotype_dist[pathogen_species_i].end()) continue; // skip this allele if no host actually carries it
+
+                        int levDistance = Helper::generate_merit(pathogenHaplotype.sequence, newSequence);
+                        meritCache.set(host_species_index, newAlleleId, pathogen_species_i, pathogenHaplotype.id, levDistance);
+                    }
+                }
+
+            }
+
+        }
     }
 
 
 
+    std::cout << "generation " << totalHostGenerations << " complete\n";
 
 }
 
