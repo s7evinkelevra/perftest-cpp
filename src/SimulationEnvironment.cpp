@@ -72,6 +72,8 @@ void SimulationEnvironment::initializeHostPool() {
 void SimulationEnvironment::initializePathogenPool() {
     pathogenPool.pathogens.resize(config["pathogens"]["species_n"]);
     pathogenPool.fitness_sum.resize(config["pathogens"]["species_n"]);
+    int initialFitness = config["pathogens"]["initial_fitness"];
+
     for( int species_i = 0; species_i < config["pathogens"]["species_n"]; species_i ++ ){
         pathogenPool.pathogens[species_i].reserve(config["pathogens"]["n"]);
         for( int i = 0; i < config["pathogens"]["n"]; i++ ){
@@ -102,7 +104,7 @@ void SimulationEnvironment::printPathogen(int species, int index){
     Pathogen& pathogen = pathogenPool.pathogens[species][index];
     pathogen.print();
 
-    Allele& haplotype = pathogenAllelePool.alleles[species][pathogen.haplotypeId];
+    Allele& haplotype = pathogenAllelePool.alleles[species][pathogen.haplotype_id];
     std::cout << "  haplotype id: " << haplotype.id << " -> " << haplotype.sequence << std::endl;
 }
 
@@ -121,42 +123,45 @@ void SimulationEnvironment::initialize() {
 }
 
 // implement single simulation step
-// this represents a single host generation with n pathogen generations
+// this represents a single host totalHostGenerations with n pathogen generations
 void SimulationEnvironment::step() {
     infectionRegieme.infect();
     infectionRegieme.testMethod();
     totalHostGenerations++;
 
     // get distribution of merits of all allele:haplotype combs
-    std::unordered_map<int, int> merit_dist = meritCache.getDistribution();
-    std::cout << "allele:haplotype merit distribution" << std::endl;
-    for(auto& item: merit_dist){
-        std::cout << item.first << " : " << item.second << std::endl;
-    }
+//    std::unordered_map<int, int> merit_dist = meritCache.getDistribution();
+//    std::cout << "allele:haplotype merit distribution" << std::endl;
+//    for(auto& item: merit_dist){
+//        std::cout << item.first << " : " << item.second << std::endl;
+//    }
 
     //std::cout << "count of observed alleles: " << hostPool.getAlleleCounts() << std::endl;
+//    std::vector<std::unordered_map<int, int>> allele_dists = hostPool.getAlleleDistributions();
+//    std::cout << "Host allele distribution" << std::endl;
+//    for(auto& dist : allele_dists){
+//        for(auto& item : dist){
+//            std::cout << item.first << " : " << item.second << std::endl;
+//        }
+//    }
 
-    std::vector<std::unordered_map<int, int>> allele_dists = hostPool.getAlleleDistributions();
-    std::cout << "Host allele distribution" << std::endl;
-    for(auto& dist : allele_dists){
-        for(auto& item : dist){
-            std::cout << item.first << " : " << item.second << std::endl;
-        }
-    }
 
 
 
     // i host generations with j pathogen generations each
-    // each host generation contains
+    // each host totalHostGenerations contains
     //  n pathogen generations
     //      infection
     //      reproduction
     //      mutation
     //  reproduction
     //  mutation
+
+    // begin pathogen generations per host generation
     for(int pathogen_generation = 0; pathogen_generation < config["infection"]["infections_per_generation"]; pathogen_generation++){
         totalPathogenGenerations++;
 
+        // begin infection (occurs per pathogen generation)
         for(int host_species_index = 0; host_species_index < hostPool.hosts.size(); host_species_index++){
             unsigned long host_pop_size = hostPool.hosts[host_species_index].size();
             for(int host_index = 0; host_index < host_pop_size; host_index++) {
@@ -169,14 +174,14 @@ void SimulationEnvironment::step() {
                     // determine smallest lev distance of all host alleles to the selected pathogen haplotype
                     int smallest_lev = 99999;
                     for(const int& allele_id : selectedHost.chromosome_1_allele_ids){
-                        const int lev_dist = meritCache.get(host_species_index, allele_id, patho_species_index, selectedPathogen.haplotypeId);
+                        const int lev_dist = meritCache.get(host_species_index, allele_id, patho_species_index, selectedPathogen.haplotype_id);
                         //std::cout << "lev dist: " << lev_dist << std::endl;
                         if(lev_dist < smallest_lev){
                             smallest_lev = lev_dist;
                         }
                     }
                     for(const int& allele_id : selectedHost.chromosome_2_allele_ids){
-                        const int lev_dist = meritCache.get(host_species_index, allele_id, patho_species_index, selectedPathogen.haplotypeId);
+                        const int lev_dist = meritCache.get(host_species_index, allele_id, patho_species_index, selectedPathogen.haplotype_id);
                         //std::cout << "lev dist: " << lev_dist << std::endl;
                         if(lev_dist < smallest_lev){
                             smallest_lev = lev_dist;
@@ -199,15 +204,22 @@ void SimulationEnvironment::step() {
         }
 
         // calculate fitness of hosts/pathogens and their sums after infection took place
-        hostPool.updateFitness();
         pathogenPool.updateFitness();
 
         // pathogen reproduction
+        // infection count/fitness is cleared during this step!!
         double dice;
         int totalTries = 0;
         //TODO(JAN): find fast implementation for roulette wheel selection
         for(int patho_species_index = 0; patho_species_index < pathogenPool.pathogens.size(); patho_species_index++){
             int selectedPathogens = 0;
+
+            // create vector of pathogens for this species
+            std::vector<Pathogen> nextGenerationPathogens;
+            nextGenerationPathogens.reserve(pathogenPool.pathogens[patho_species_index].size());
+
+            unsigned int pathogenIdBase = pathogenPool.pathogens[patho_species_index].size() * totalPathogenGenerations;
+
             std::cout << "species total fitness: " << pathogenPool.fitness_sum[patho_species_index] << std::endl;
             while(selectedPathogens < pathogenPool.pathogens[patho_species_index].size()){
                 dice = rng.sampleRealUniDouble(0, pathogenPool.fitness_sum[patho_species_index]);
@@ -216,12 +228,14 @@ void SimulationEnvironment::step() {
                     totalTries++;
                     dice = dice - pathogen.fitness;
                     if(dice <= 0){
-                        //TODO(JAN): actually implement the reproduction
+                        nextGenerationPathogens.emplace_back(Pathogen(pathogen.id, pathogenIdBase + selectedPathogens, config["pathogens"]["initial_fitness"], patho_species_index, pathogen.haplotype_id));
                         selectedPathogens++;
                         break;
                     }
                 }
             }
+
+            pathogenPool.pathogens[patho_species_index] = nextGenerationPathogens;
         }
 
         std::cout << "total tries: " << totalTries << std::endl;
