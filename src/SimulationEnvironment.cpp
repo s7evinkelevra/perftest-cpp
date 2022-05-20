@@ -22,7 +22,7 @@ void SimulationEnvironment::initializeHostAllelePool() {
     for( int species_i = 0; species_i < config["hosts"]["species_n"]; species_i ++ ){
         hostAllelePool.alleles[species_i].reserve(config["hosts"]["alleles_per_species_initial"]);
         for(int i = 0; i < config["hosts"]["alleles_per_species_initial"]; i++){
-            hostAllelePool.alleles[species_i].emplace_back(Allele(i, Helper::gen_random(config["hosts"]["allele_sequence_length"])));
+            hostAllelePool.alleles[species_i].emplace_back(Allele(i, generateSequence(config["hosts"]["allele_sequence_length"])));
         }
     }
 }
@@ -32,7 +32,7 @@ void SimulationEnvironment::initializePathogenAllelePool() {
     for( int species_i = 0; species_i < config["pathogens"]["species_n"]; species_i++ ){
         pathogenAllelePool.alleles[species_i].reserve(config["pathogens"]["haplotypes_per_species_initial"]);
         for(int i = 0; i < config["pathogens"]["haplotypes_per_species_initial"]; i++){
-            pathogenAllelePool.alleles[species_i].emplace_back(Allele(i, Helper::gen_random(config["pathogens"]["haplotype_sequence_length"])));
+            pathogenAllelePool.alleles[species_i].emplace_back(Allele(i, generateSequence(config["pathogens"]["haplotype_sequence_length"])));
         }
     }
 }
