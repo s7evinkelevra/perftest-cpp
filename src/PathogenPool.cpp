@@ -14,3 +14,22 @@ void PathogenPool::updateFitness() {
         fitness_sum[species_i] = current_fitness_sum;
     }
 }
+
+std::unordered_map<int, int> PathogenPool::getHaplotypeDistribution(int speciesId) {
+    std::unordered_map<int, int> dist;
+    for(auto& pathogen : pathogens[speciesId]){
+        dist[pathogen.haplotype_id]++;
+    }
+    return dist;
+}
+
+std::vector<std::unordered_map<int, int>> PathogenPool::getHaplotypeDistributions() {
+    std::vector<std::unordered_map<int,int>> dist_vec;
+
+    for(int species_id = 0; species_id < pathogens.size(); species_id++){
+        std::unordered_map<int, int> species_dist = getHaplotypeDistribution(species_id);
+        dist_vec.push_back(species_dist);
+    }
+
+    return dist_vec;
+}
