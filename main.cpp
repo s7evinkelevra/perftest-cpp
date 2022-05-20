@@ -111,7 +111,7 @@ int main(int argc, char const *argv[]) {
     env.printPathogen(randomPathogenSpeciesIndex, randomPathogenIndex);
 
     Pathogen& randomPathogen = env.pathogenPool.pathogens[randomPathogenSpeciesIndex][randomPathogenIndex];
-    const int haplotype_id = randomPathogen.haplotypeId;
+    const int haplotype_id = randomPathogen.haplotype_id;
     const Allele& haplotype = env.pathogenAllelePool.alleles[randomPathogenSpeciesIndex][haplotype_id];
 
     std::cout << "haplotype verification " << haplotype.sequence << std::endl;
@@ -124,7 +124,9 @@ int main(int argc, char const *argv[]) {
 
     auto simulation_start = std::chrono::steady_clock::now();
 
-    env.step();
+    for(int generation = 0; generation < 100; generation++){
+        env.step();
+    }
 
     auto simulation_end = std::chrono::steady_clock::now();
 
