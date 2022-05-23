@@ -124,6 +124,7 @@ int main(int argc, char const *argv[]) {
 
     auto simulation_start = std::chrono::steady_clock::now();
 
+    env.setBurnInMode();
     for(int generation = 0; generation < 100; generation++){
         env.step();
     }

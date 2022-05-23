@@ -36,9 +36,10 @@ public:
 
     //TODO(JAN): dont forget to use these member vars
     bool bInfection;
+    bool bHostFitnessproportionalReproduction;
+    bool bPathogenFitnessproportionalReproduction;
     bool bHostMutation;
     bool bPathogenMutation;
-    bool bReproduction;
 
     AllelePool hostAllelePool;
     AllelePool pathogenAllelePool;
@@ -65,8 +66,29 @@ public:
 
 
     // simulation
+    void setDefaultMode();
+    void setBurnInMode();
+    void setNoCoevolutionMode();
+
     void step();
 
+    void pathogenGeneration();
+
+    void hostReproduction();
+
+    void hostReproductionRandom();
+
+    void hostMutation();
+
+    void hostGeneration();
+
+    void infection();
+
+    void pathogenReproduction();
+
+    void pathogenReproductionRandom();
+
+    void pathogenMutation();
 };
 
 
