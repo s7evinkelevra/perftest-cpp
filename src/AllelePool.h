@@ -11,7 +11,7 @@
 class AllelePool {
 public:
     std::vector<std::vector<Allele>> alleles;
-    unsigned long addAllele(int species_id, std::string sequence);
+    unsigned long addAllele(int species_id,int parent_id, std::string sequence);
 };
 
 
