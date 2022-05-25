@@ -17,9 +17,9 @@
     "n": 10000,
     "species_n":2,
     "initial_fitness": -1,
-    "haplotypes_per_species_initial": 2,
+    "haplotypes_per_species_initial": 10,
     "haplotype_sequence_length": 2000,
-    "mutation_rate_per_peptide": 0.0000000003
+    "mutation_rate_per_peptide": 0.0000003
   },
   "infection": {
     "infections_per_generation": 10,
