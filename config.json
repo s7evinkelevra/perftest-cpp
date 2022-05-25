@@ -1,5 +1,6 @@
 {
   "configId": 0,
+  "output_path": "./output/",
   "generations": 10000,
   "burnin_generations": 500,
   "aminoacids": "ACDEFGHIKLMNOPQRSTUVWY",
