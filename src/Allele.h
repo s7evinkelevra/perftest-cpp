@@ -9,8 +9,9 @@
 
 class Allele {
 public:
-    Allele(int alleleId, std::string allele_sequence);
+    Allele(int parent_id, int allele_id, std::string allele_sequence);
     int id;
+    int parentId;
     std::string sequence;
     long createdAt;
 };
