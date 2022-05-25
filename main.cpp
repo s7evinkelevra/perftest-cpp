@@ -81,8 +81,7 @@ int main(int argc, char const *argv[]) {
     }
     */
 
-    RandomInfectionRegime randomInfectionRegime(config);
-    SimulationEnvironment env(config, randomInfectionRegime);
+    SimulationEnvironment env(config);
     env.initialize();
 
     auto pool_init_end = std::chrono::steady_clock::now();
@@ -124,10 +123,28 @@ int main(int argc, char const *argv[]) {
 
     auto simulation_start = std::chrono::steady_clock::now();
 
+    env.writeHostData();
+    env.writeHostGenomeData();
+    env.writeHostAlleleData();
+
     env.setBurnInMode();
-    for(int generation = 0; generation < 100; generation++){
+    for(int burnin_generation = 0; burnin_generation < 10; burnin_generation++){
         env.step();
     }
+
+    env.writeHostData();
+    env.writeHostGenomeData();
+    env.writeHostAlleleData();
+
+    env.setDefaultMode();
+    for(int generation = 0; generation < 10; generation++){
+        env.step();
+        env.writeHostData();
+        env.writeHostGenomeData();
+        env.writeHostAlleleData();
+    }
+
+
 
     auto simulation_end = std::chrono::steady_clock::now();
 
