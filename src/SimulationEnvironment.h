@@ -13,6 +13,9 @@
 #include "Helper.h"
 #include "MeritCache.h"
 #include "InfectionRegiemes/InfectionRegime.h"
+#include "CSVWriter.h"
+#include <memory>
+
 
 #include "nlohmann/json.hpp"
 using json = nlohmann::json;
@@ -20,7 +23,18 @@ using json = nlohmann::json;
 class SimulationEnvironment {
 private:
     Random rng;
-    InfectionRegime& infectionRegieme;
+
+
+    std::unique_ptr<CSVWriter> hostDataCSV;
+    std::unique_ptr<CSVWriter> hostGenomeDataCSV;
+    std::unique_ptr<CSVWriter> hostAlleleDataCSV;
+    std::unique_ptr<CSVWriter> hostLocusDataCSV;
+
+    std::unique_ptr<CSVWriter> pathogenDataCSV;
+    std::unique_ptr<CSVWriter> pathogenGenomeDataCSV;
+    std::unique_ptr<CSVWriter> pathogenAlleleDataCSV;
+    std::unique_ptr<CSVWriter> pathogenLocusDataCSV;
+
 
     void initializeHostAllelePool();
     void initializePathogenAllelePool();
@@ -28,8 +42,10 @@ private:
     void initializeHostPool();
     void initializePathogenPool();
 
+    void initializeCSVFiles();
+
 public:
-    SimulationEnvironment(json initialConfig, InfectionRegime& infectionRegieme);
+    SimulationEnvironment(json initialConfig);
     json config;
     int totalHostGenerations;
     int totalPathogenGenerations;
@@ -53,17 +69,23 @@ public:
 
     void initialize();
     std::string generateSequence(int length);
-    int addHostAllele(int host_species_id, const std::string& sequence);
-    int addPathogenAllele(int patho_species_id, const std::string& sequence);
 
     // stringify host
     void printHost(int species, int index);
     void printPathogen(int species, int index);
 
-    void testMethod();
+    // stat  functions
 
-    // stat functions
+    // writing data
+    void writeHostData();
+    void writeHostGenomeData();
+    void writeHostAlleleData();
+    void writeHostLocusData();
 
+    void writePathogenData();
+    void writePathogenGenomeData();
+    void writePathogenAlleleData();
+    void writePathogenLocusData();
 
     // simulation
     void setDefaultMode();
