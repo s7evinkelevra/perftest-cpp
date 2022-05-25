@@ -12,43 +12,44 @@ HostPool::HostPool() {
 }
 */
 
-std::vector<std::unordered_map<int, int>> HostPool::getAlleleDistributions() {
+std::vector<std::unordered_map<int, int>> HostPool::getAlleleDistributions(int locus_id) {
     std::vector<std::unordered_map<int,int>> dist_vec;
 
     for(int species_id = 0; species_id < hosts.size(); species_id++){
-        std::unordered_map<int, int> species_dist = getAlleleDistribution(species_id);
+        std::unordered_map<int, int> species_dist = getAlleleDistribution(species_id, locus_id);
         dist_vec.push_back(species_dist);
     }
 
     return dist_vec;
 }
 
-std::unordered_map<int, int> HostPool::getAlleleDistribution(int speciesId) {
+std::unordered_map<int, int> HostPool::getAlleleDistribution(int speciesId, int locus_id) {
     std::unordered_map<int, int> dist;
 
     for(auto& host : hosts[speciesId]){
-        for(auto& allele_id : host.chromosome_1_allele_ids){
-            dist[allele_id]++;
-        }
-        for(auto& allele_id : host.chromosome_2_allele_ids){
-            dist[allele_id]++;
-        }
+        if(host.chromosome_1_allele_ids.size() > locus_id){
+            dist[host.chromosome_1_allele_ids[locus_id]]++;
+        };
+
+        if(host.chromosome_2_allele_ids.size() > locus_id){
+            dist[host.chromosome_2_allele_ids[locus_id]]++;
+        };
     }
 
     return dist;
 }
 
-std::vector<int> HostPool::getAlleleCounts() {
+std::vector<int> HostPool::getAlleleCounts(int locus_id) {
     std::vector<int> counts;
     counts.reserve(hosts.size());
     for(int species_id = 0; species_id < hosts.size(); species_id++){
-        counts.push_back(getAlleleCount(species_id));
+        counts.push_back(getAlleleCount(species_id, locus_id));
     }
     return counts;
 }
 
-int HostPool::getAlleleCount(int speciesId) {
-    return (int) getAlleleDistribution(speciesId).size();
+int HostPool::getAlleleCount(int speciesId, int locus_id) {
+    return (int) getAlleleDistribution(speciesId, locus_id).size();
 }
 
 void HostPool::updateFitness() {

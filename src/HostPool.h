@@ -15,11 +15,11 @@ public:
 /*    HostPool(int hostPoolSize);
     virtual ~HostPool();*/
     std::vector<std::vector<Host>> hosts;
-    std::vector<std::unordered_map<int, int>> getAlleleDistributions();
-    std::unordered_map<int, int> getAlleleDistribution(int speciesId);
+    std::vector<std::unordered_map<int, int>> getAlleleDistributions(int locus_id);
+    std::unordered_map<int, int> getAlleleDistribution(int speciesId, int locus_id);
 
-    std::vector<int> getAlleleCounts();
-    int getAlleleCount(int speciesId);
+    std::vector<int> getAlleleCounts(int locus_id);
+    int getAlleleCount(int speciesId, int locus_id);
 
     std::vector<double> fitness_sum;
 
