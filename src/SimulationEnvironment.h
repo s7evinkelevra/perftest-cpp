@@ -15,6 +15,7 @@
 #include "InfectionRegiemes/InfectionRegime.h"
 #include "CSVWriter.h"
 #include <memory>
+#include <chrono>
 
 
 #include "nlohmann/json.hpp"
@@ -58,7 +59,6 @@ public:
     int totalHostGenerations;
     int totalPathogenGenerations;
 
-    //TODO(JAN): dont forget to use these member vars
     bool bInfection;
     bool bHostFitnessproportionalReproduction;
     bool bPathogenFitnessproportionalReproduction;
@@ -94,6 +94,8 @@ public:
     void writePathogenGenomeData();
     void writePathogenAlleleData();
     void writePathogenLocusData();
+
+    void writeMetaData();
 
     // simulation
     void setDefaultMode();

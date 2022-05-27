@@ -128,7 +128,8 @@ int main(int argc, char const *argv[]) {
     env.writeHostAlleleData();
 
     env.setBurnInMode();
-    for(int burnin_generation = 0; burnin_generation < 10; burnin_generation++){
+    env.writeMetaData();
+    for(int burnin_generation = 0; burnin_generation < 50; burnin_generation++){
         env.step();
     }
 
@@ -137,12 +138,16 @@ int main(int argc, char const *argv[]) {
     env.writeHostAlleleData();
 
     env.setDefaultMode();
-    for(int generation = 0; generation < 10; generation++){
+    env.writeMetaData();
+    for(int generation = 0; generation < 100; generation++){
         env.step();
-        env.writeHostData();
         env.writeHostGenomeData();
         env.writeHostAlleleData();
+        env.writeMetaData();
     }
+
+    env.writeHostData();
+
 
 
 
