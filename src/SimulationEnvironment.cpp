@@ -7,6 +7,7 @@
 #include <iostream>
 #include <utility>
 #include <filesystem>
+#include <thread>
 
 
 
@@ -22,6 +23,11 @@ SimulationEnvironment::SimulationEnvironment(json initialConfig){
     bPathogenMutation = true;
 
     rng = Random();
+
+    unsigned int threads_wanted = config["thread_n"];
+    unsigned int threads_available = std::thread::hardware_concurrency();
+    thread_count = std::min({threads_available, threads_wanted});
+    std::cout << "threads wanted: " << threads_wanted << "threads available: " << threads_available << "\n";
 }
 
 void SimulationEnvironment::initializeHostAllelePool() {
@@ -192,7 +198,11 @@ void SimulationEnvironment::step() {
 //        }
 //    }
 
+    lastStepStart = std::chrono::steady_clock::now();
+
     hostGeneration();
+
+    lastStepEnd = std::chrono::steady_clock::now();
 
 
     std::cout << "generation " << totalHostGenerations << " complete\n";

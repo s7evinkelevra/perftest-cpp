@@ -24,6 +24,9 @@ class SimulationEnvironment {
 private:
     Random rng;
 
+    std::chrono::time_point<std::chrono::steady_clock> lastStepStart;
+    std::chrono::time_point<std::chrono::steady_clock> lastStepEnd;
+
 
     std::unique_ptr<CSVWriter> hostDataCSV;
     std::unique_ptr<CSVWriter> hostGenomeDataCSV;
@@ -34,6 +37,8 @@ private:
     std::unique_ptr<CSVWriter> pathogenGenomeDataCSV;
     std::unique_ptr<CSVWriter> pathogenAlleleDataCSV;
     std::unique_ptr<CSVWriter> pathogenLocusDataCSV;
+
+    std::unique_ptr<CSVWriter> metaDataCSV;
 
 
     void initializeHostAllelePool();
@@ -47,6 +52,9 @@ private:
 public:
     SimulationEnvironment(json initialConfig);
     json config;
+
+    unsigned int thread_count;
+
     int totalHostGenerations;
     int totalPathogenGenerations;
 
