@@ -3,13 +3,6 @@
   <component name="CsvFileAttributes">
     <option name="attributeMap">
       <map>
-        <entry key="\cmake-build-release\output\allele_data.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value=";" />
-            </Attribute>
-          </value>
-        </entry>
         <entry key="\cmake-build-release\output\host_allele_data.csv">
           <value>
             <Attribute>
@@ -38,10 +31,17 @@
             </Attribute>
           </value>
         </entry>
-        <entry key="\cmake-build-release\output\locus_data.csv">
+        <entry key="\cmake-build-release\output\meta_data.csv">
           <value>
             <Attribute>
-              <option name="separator" value=";" />
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\cmake-build-release\output\pathogen_allele_data.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
