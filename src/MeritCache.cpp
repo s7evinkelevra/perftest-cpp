@@ -68,4 +68,9 @@ int MeritCache::getHighest() {
     return highest;
 }
 
+bool MeritCache::exists(int host_species_id, int host_allele_id, int patho_species_id, int patho_allele_id) {
+    std::string key = keyFromIds(host_species_id, host_allele_id, patho_species_id, patho_allele_id);
+    return cache.find(key) != cache.end();
+}
+
 

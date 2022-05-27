@@ -16,6 +16,7 @@ public:
     std::unordered_map<std::string, int> cache;
     void set(int host_species_id, int host_allele_id, int patho_species_id, int patho_allele_id, int value);
     int get(int host_species_id, int host_allele_id, int patho_species_id, int patho_allele_id);
+    bool exists(int host_species_id, int host_allele_id, int patho_species_id, int patho_allele_id);
 
     float getAverage();
     std::unordered_map<int, int> getDistribution();
