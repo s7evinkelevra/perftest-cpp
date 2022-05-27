@@ -23,7 +23,7 @@ int Helper::generate_merit(std::string_view allele, std::string_view haplotype){
     const unsigned long window_width = allele.length();
 
     int lowest_edit_distance = -1;
-
+    #pragma omp parallel for
     for(int i = 0; i < haplotype.length() - window_width + step_size; i += step_size) {
         std::string_view window = haplotype.substr(i,window_width);
         const int current_edit_distance = LevenshteinDistance(allele, window);
