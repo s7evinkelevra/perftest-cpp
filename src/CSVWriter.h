@@ -23,8 +23,8 @@ public:
     };
 
     ~CSVWriter(){
-        std::cout << "closing file stream\n";
-        // Close the file
+        //std::cout << "closing file stream\n";
+        // Close the file on destruction
         _file.close();
     }
 

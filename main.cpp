@@ -119,7 +119,7 @@ int main(int argc, char const *argv[]) {
 
     env.setBurnInMode();
     env.writeMetaData();
-    for(int burnin_generation = 0; burnin_generation < 1; burnin_generation++){
+    for(int burnin_generation = 0; burnin_generation < 25; burnin_generation++){
         env.step();
     }
 
@@ -129,7 +129,7 @@ int main(int argc, char const *argv[]) {
 
     env.setDefaultMode();
     env.writeMetaData();
-    for(int generation = 0; generation < 1; generation++){
+    for(int generation = 0; generation < 25; generation++){
         env.step();
         env.writeHostGenomeData();
         env.writeHostAlleleData();
