@@ -23,7 +23,7 @@ std::unordered_map<int, int> PathogenPool::getHaplotypeDistribution(int speciesI
     return dist;
 }
 
-std::vector<std::unordered_map<int, int>> PathogenPool::getHaplotypeDistributions() {
+std::vector<std::unordered_map<int, int>> PathogenPool::getHaplotypeDistributionsPerSpecies() {
     std::vector<std::unordered_map<int,int>> dist_vec;
 
     for(int species_id = 0; species_id < pathogens.size(); species_id++){

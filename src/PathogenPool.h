@@ -18,7 +18,7 @@ public:
     void updateFitness();
 
     std::unordered_map<int, int> getHaplotypeDistribution(int speciesId);
-    std::vector<std::unordered_map<int, int>> getHaplotypeDistributions();
+    std::vector<std::unordered_map<int, int>> getHaplotypeDistributionsPerSpecies();
 
 
 };

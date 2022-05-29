@@ -12,7 +12,7 @@
     "alleles_per_species_initial": 75,
     "allele_sequence_length": 9,
     "genes_per_chromosome_initial": 1,
-    "mutation_rate_per_peptide": 0.0000003
+    "mutation_rate_per_peptide": 0.00003
   },
   "pathogens": {
     "n": 10000,
@@ -20,7 +20,7 @@
     "initial_fitness": -1,
     "haplotypes_per_species_initial": 10,
     "haplotype_sequence_length": 2000,
-    "mutation_rate_per_peptide": 0.000003
+    "mutation_rate_per_peptide": 0.0003
   },
   "infection": {
     "infections_per_generation": 10,

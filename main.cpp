@@ -71,16 +71,6 @@ int main(int argc, char const *argv[]) {
     auto pool_init_start = std::chrono::steady_clock::now();
 
 
-    //TODO(JAN): smart pointer statt referenzen
-    // config polymorphism -> instantiate object based on config
-    // create shared ptr and pass that to the simulation env
-    /*
-    std::shared_ptr<InfectionRegime> infectionRegime;
-    if(config["regime"] == "random"){
-        infectionRegime = std::make_shared<RandomInfectionRegime>();
-    }
-    */
-
     SimulationEnvironment env(config);
     env.initialize();
 
@@ -91,7 +81,7 @@ int main(int argc, char const *argv[]) {
               << " ms" << std::endl;
 
     // sanity check
-    int randomHostSpeciesIndex = rand() % env.hostPool.hosts.size();
+    /* int randomHostSpeciesIndex = rand() % env.hostPool.hosts.size();
     int randomHostIndex = rand() % env.hostPool.hosts[randomHostSpeciesIndex].size();
     env.printHost(randomHostSpeciesIndex, randomHostIndex);
 
@@ -119,7 +109,7 @@ int main(int argc, char const *argv[]) {
     const int allele_1_ht_cached_merit = env.meritCache.get(randomHostSpeciesIndex, allele_1_id, randomPathogenSpeciesIndex, haplotype_id);
 
     std::cout << "allele 1 <-> haplotype merit: " << allele_1_ht_merit << std::endl;
-    std::cout << "allele 1 <-> haplotype merit (cached): " << allele_1_ht_cached_merit << std::endl;
+    std::cout << "allele 1 <-> haplotype merit (cached): " << allele_1_ht_cached_merit << std::endl; */
 
     auto simulation_start = std::chrono::steady_clock::now();
 
@@ -129,7 +119,7 @@ int main(int argc, char const *argv[]) {
 
     env.setBurnInMode();
     env.writeMetaData();
-    for(int burnin_generation = 0; burnin_generation < 50; burnin_generation++){
+    for(int burnin_generation = 0; burnin_generation < 1; burnin_generation++){
         env.step();
     }
 
@@ -139,7 +129,7 @@ int main(int argc, char const *argv[]) {
 
     env.setDefaultMode();
     env.writeMetaData();
-    for(int generation = 0; generation < 100; generation++){
+    for(int generation = 0; generation < 1; generation++){
         env.step();
         env.writeHostGenomeData();
         env.writeHostAlleleData();
@@ -153,11 +143,11 @@ int main(int argc, char const *argv[]) {
 
     auto simulation_end = std::chrono::steady_clock::now();
 
-    randomHost.print();
-    randomPathogen.print();
+    //randomHost.print();
+    //randomPathogen.print();
 
 
-    std::cout << "Simulation Time: "
+    std::cout << "total simulation run time: "
          << std::chrono::duration_cast<std::chrono::milliseconds>(simulation_end - simulation_start).count()
          << " ms" << std::endl;
 
