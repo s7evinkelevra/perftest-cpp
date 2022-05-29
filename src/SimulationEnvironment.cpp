@@ -8,7 +8,7 @@
 #include <utility>
 #include <filesystem>
 #include <thread>
-
+#include <omp.h>
 
 
 SimulationEnvironment::SimulationEnvironment(json initialConfig){
@@ -28,6 +28,7 @@ SimulationEnvironment::SimulationEnvironment(json initialConfig){
     unsigned int threads_available = std::thread::hardware_concurrency();
     thread_count = std::min({threads_available, threads_wanted});
     std::cout << "threads wanted: " << threads_wanted << "threads available: " << threads_available << "\n";
+    omp_set_num_threads(thread_count);
 }
 
 void SimulationEnvironment::initializeHostAllelePool() {

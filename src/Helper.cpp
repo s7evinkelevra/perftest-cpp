@@ -3,7 +3,8 @@
 //
 
 #include "Helper.h"
-
+#include <omp.h>
+#include <iostream>
 
 std::string Helper::gen_random(const int len) {
     static const char AS[] =
@@ -23,7 +24,7 @@ int Helper::generate_merit(std::string_view allele, std::string_view haplotype){
     const unsigned long window_width = allele.length();
 
     int lowest_edit_distance = -1;
-    #pragma omp parallel for
+    #pragma omp parallel for default(none) shared(lowest_edit_distance, allele, haplotype, window_width, step_size)
     for(int i = 0; i < haplotype.length() - window_width + step_size; i += step_size) {
         std::string_view window = haplotype.substr(i,window_width);
         const int current_edit_distance = LevenshteinDistance(allele, window);

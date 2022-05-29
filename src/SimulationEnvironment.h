@@ -97,6 +97,9 @@ public:
 
     void writeMetaData();
 
+    // housekeeping
+    void purgeUnusedAlleles();
+
     // simulation
     void setDefaultMode();
     void setBurnInMode();
