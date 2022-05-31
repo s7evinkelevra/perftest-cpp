@@ -9,6 +9,7 @@
 #include <vector>
 #include <deque>
 #include <boost/program_options.hpp>
+#include <unordered_map>
 
 #include "src/nlohmann/json.hpp"
 
@@ -65,6 +66,7 @@ int main(int argc, char const *argv[]) {
     // parse config to json
     json config;
     configStream >> config;
+    configStream.close();
 
     std::cout << "config: \n" << config.dump(4) << std::endl;
 
@@ -113,30 +115,76 @@ int main(int argc, char const *argv[]) {
 
     auto simulation_start = std::chrono::steady_clock::now();
 
+    env.setBurnInMode();
+
     env.writeHostData();
     env.writeHostGenomeData();
     env.writeHostAlleleData();
 
-    env.setBurnInMode();
+    env.writePathogenData();
+    env.writePathogenGenomeData();
+    env.writePathogenAlleleData();
+
     env.writeMetaData();
-    for(int burnin_generation = 0; burnin_generation < 25; burnin_generation++){
+
+    for(int burnin_generation = 0; burnin_generation < env.config["burnin_generations"]; burnin_generation++){
         env.step();
     }
 
     env.writeHostData();
     env.writeHostGenomeData();
     env.writeHostAlleleData();
+
+    env.writePathogenData();
+    env.writePathogenGenomeData();
+    env.writePathogenAlleleData();
+
+    env.writeMetaData();
+
+    std::cout << "allele distribution across all loci: \n";
+    std::vector<std::unordered_map<int,int>> allele_dist_per_species = env.hostPool.getAlleleDistributionAcrossAllLociPerSpecies();
+
+    for (int species_i = 0; species_i < allele_dist_per_species.size(); species_i++){
+        std::cout << "---- species" << species_i << "----\n";
+        for(auto& item : allele_dist_per_species[species_i]){
+            std::cout << "allele " << item.first << " -> " << item.second << "\n";
+        }
+    }
+
+    std::cout << "haplotype distribution \n";
+    std::vector<std::unordered_map<int,int>> haplotype_dist_per_species = env.pathogenPool.getHaplotypeDistributionsPerSpecies();
+
+    for (int species_i = 0; species_i < haplotype_dist_per_species.size(); species_i++){
+        std::cout << "---- species" << species_i << "----\n";
+        for(auto& item : haplotype_dist_per_species[species_i]){
+            std::cout << "haplotype " << item.first << " -> " << item.second << "\n";
+        }
+    }
+
+    std::cout << "before purge alleles in use in patho species 0: " << env.pathogenAllelePool.alleles[0].size() << "\n";
+    env.purgeUnusedAlleles();
+    std::cout << "after purge alleles in use in patho species 0: " << env.pathogenAllelePool.alleles[0].size() << "\n";
 
     env.setDefaultMode();
-    env.writeMetaData();
-    for(int generation = 0; generation < 25; generation++){
+    for(int generation = 0; generation < env.config["generations"]; generation++){
         env.step();
-        env.writeHostGenomeData();
         env.writeHostAlleleData();
+
+        env.writePathogenAlleleData();
+
         env.writeMetaData();
+
+        if(generation % 20 == 0){
+            env.purgeUnusedAlleles();
+            env.writeHostData();
+            env.writeHostGenomeData();
+
+            env.writePathogenData();
+            env.writePathogenGenomeData();
+
+        }
     }
 
-    env.writeHostData();
 
 
 

@@ -27,7 +27,7 @@ SimulationEnvironment::SimulationEnvironment(json initialConfig){
     unsigned int threads_wanted = config["thread_n"];
     unsigned int threads_available = std::thread::hardware_concurrency();
     thread_count = std::min({threads_available, threads_wanted});
-    std::cout << "threads wanted: " << threads_wanted << "threads available: " << threads_available << "\n";
+    std::cout << "threads wanted: " << threads_wanted << "\nthreads available: " << threads_available << "\n";
     omp_set_num_threads(thread_count);
 }
 
@@ -115,7 +115,7 @@ void SimulationEnvironment::initializePathogenPool() {
     }
 }
 
-void SimulationEnvironment::initializeCSVFiles() {
+void SimulationEnvironment::initializeOutputFiles() {
     // create CSV writers and files
     std::string output_base_path = config["output_path"];
 
@@ -124,6 +124,11 @@ void SimulationEnvironment::initializeCSVFiles() {
     }
 
     std::filesystem::create_directory(output_base_path);
+
+    // copy config file to output dir
+    std::ofstream configFileStream(output_base_path + "config.json");
+    configFileStream << config.dump(4);
+    configFileStream.close();
 
     std::vector allele_CSV_headers = {"generation", "species", "locus_id", "allele_id", "parent_id", "count", "frequency"};
     std::vector locus_CSV_headers = {"generation", "species", "locus_id", "allele_count", "allelic_richness", "H_e", "H_o", "HWE"};
@@ -195,12 +200,13 @@ void SimulationEnvironment::initialize() {
     initializeHostAllelePool();
     initializePathogenAllelePool();
 
+    // after burn-in, none of the originial alleles are left anyways...
     initializeMeritCache();
 
     initializeHostPool();
     initializePathogenPool();
 
-    initializeCSVFiles();
+    initializeOutputFiles();
 }
 
 // implement single simulation step
@@ -780,7 +786,7 @@ void SimulationEnvironment::writePathogenData() {
                 std::to_string(currentPathogen.no_infection_count),
                 std::to_string(currentPathogen.infection_count + currentPathogen.no_infection_count),
                 std::to_string(currentPathogen.fitness)};
-            hostDataCSV->addRow(props.begin(), props.end());
+            pathogenDataCSV->addRow(props.begin(), props.end());
         }
     }
 }
@@ -795,7 +801,7 @@ void SimulationEnvironment::writePathogenGenomeData() {
                 std::to_string(patho_species_i),
                 std::to_string(currentPathogen.id),
                 std::to_string(currentPathogen.haplotype_id)};
-            hostDataCSV->addRow(props.begin(), props.end());
+            pathogenGenomeDataCSV->addRow(props.begin(), props.end());
         }
     }
 }
@@ -832,6 +838,14 @@ void SimulationEnvironment::writePathogenAlleleData() {
 }
 
 void SimulationEnvironment::purgeUnusedAlleles(){
+    for(int host_species_i = 0; host_species_i < hostAllelePool.alleles.size(); host_species_i++){
+        std::unordered_map<int, int> allele_dist = hostPool.getAlleleDistributionAcrossAllLoci(host_species_i);
+        hostAllelePool.purgeUnused(host_species_i, allele_dist);
+    }
 
+    for(int patho_species_i = 0; patho_species_i < pathogenAllelePool.alleles.size(); patho_species_i++){
+        std::unordered_map<int, int> haplotype_dist = pathogenPool.getHaplotypeDistribution(patho_species_i);
+        pathogenAllelePool.purgeUnused(patho_species_i, haplotype_dist);
+    }
 
 }

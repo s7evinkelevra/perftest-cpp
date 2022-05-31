@@ -48,7 +48,7 @@ private:
     void initializeHostPool();
     void initializePathogenPool();
 
-    void initializeCSVFiles();
+    void initializeOutputFiles();
 
 public:
     SimulationEnvironment(json initialConfig);
