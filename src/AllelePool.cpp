@@ -8,10 +8,10 @@
 #include <iostream>
 #include "Allele.h"
 
-unsigned long AllelePool::addAllele(int species_id, int parent_id, std::string sequence) {
+unsigned long AllelePool::addAllele(int species_id, int parent_id, int created_at_generation, std::string sequence) {
     int& allele_count = total_allele_counts_per_species[species_id];
     allele_count++;
-    alleles[species_id].emplace(allele_count, Allele(parent_id, (int)allele_count, std::move(sequence)));
+    alleles[species_id].emplace(allele_count, Allele(parent_id, (int)allele_count, created_at_generation, std::move(sequence)));
     return allele_count;
 }
 

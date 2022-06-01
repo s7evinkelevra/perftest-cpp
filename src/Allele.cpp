@@ -8,10 +8,9 @@
 #include <chrono>
 
 
-Allele::Allele(int parent_id, int alleleId, std::string allele_sequence) {
+Allele::Allele(int parent_id, int alleleId, int created_at_generation, std::string allele_sequence) {
     id = alleleId;
     parentId = parent_id;
     sequence = std::move(allele_sequence);
-    const auto now = std::chrono::system_clock::now();
-    createdAt = std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch()).count();
+    createdAtGeneration = created_at_generation;
 }
