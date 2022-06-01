@@ -2,8 +2,8 @@
   "configId": 0,
   "output_path": "./output-11/",
   "thread_n": 10,
-  "generations": 50,
-  "burnin_generations": 50,
+  "generations": 100,
+  "burnin_generations": 200,
   "aminoacids": "ACDEFGHIKLMNOPQRSTUVWY",
   "hosts": {
     "n": 10000,
@@ -20,7 +20,7 @@
     "initial_fitness": -1,
     "haplotypes_per_species_initial": 10,
     "haplotype_sequence_length": 2000,
-    "mutation_rate_per_peptide": 0.00003
+    "mutation_rate_per_peptide": 0.0003
   },
   "infection": {
     "infections_per_generation": 10,
