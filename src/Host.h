@@ -10,9 +10,11 @@
 
 class Host {
 public:
-    Host(int parentId1, int parentId2, int hostId, double initialFitness, int speciesId);
+    Host(int parentId1, double parentFitness1, int parentId2, double parentFitness2, int hostId, double initialFitness, int speciesId);
     int parent_id_1;
+    double parent_fitness_1;
     int parent_id_2;
+    double parent_fitness_2;
     int id;
     double fitness;
     int species;

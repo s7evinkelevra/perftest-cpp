@@ -5,9 +5,11 @@
 #include <iostream>
 #include "Host.h"
 
-Host::Host(int parentId1, int parentId2, int hostId, double initialFitness, int speciesId) {
+Host::Host(int parentId1, double parentFitness1, int parentId2, double parentFitness2, int hostId, double initialFitness, int speciesId) {
     parent_id_1 = parentId1;
+    parent_fitness_1 = parentFitness1;
     parent_id_2 = parentId2;
+    parent_fitness_2 = parentFitness2;
     id = hostId;
     fitness = initialFitness;
     species = speciesId;

@@ -402,7 +402,7 @@ void SimulationEnvironment::hostReproduction() {
 
             Host& parent_1 = hostPool.hosts[host_species_index][parent_1_id];
             Host& parent_2 = hostPool.hosts[host_species_index][parent_2_id];
-            nextGenerationHosts.emplace_back(Host(parent_1.id, parent_2.id, hostIdBase + selectedHosts, config["hosts"]["initial_fitness"], host_species_index));
+            nextGenerationHosts.emplace_back(Host(parent_1.id, parent_1.fitness, parent_2.id, parent_2.fitness, hostIdBase + selectedHosts, config["hosts"]["initial_fitness"], host_species_index));
             Host& nextGenerationHost = nextGenerationHosts.back();
 
             if(rng.sampleRealUniFloat(0, 1) < 0.5){
@@ -441,7 +441,7 @@ void SimulationEnvironment::hostReproductionRandom() {
             Host& parent_1 = hostPool.hosts[host_species_index][parent_1_id];
             Host& parent_2 = hostPool.hosts[host_species_index][parent_2_id];
 
-            nextGenerationHosts.emplace_back(Host(parent_1_id, parent_2_id, hostIdBase + new_host_i, config["hosts"]["initial_fitness"], host_species_index));
+            nextGenerationHosts.emplace_back(Host(parent_1_id, parent_1.fitness, parent_2_id, parent_2.fitness, hostIdBase + new_host_i, config["hosts"]["initial_fitness"], host_species_index));
             Host& nextGenerationHost = nextGenerationHosts.back();
 
 
