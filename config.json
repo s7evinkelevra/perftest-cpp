@@ -1,10 +1,17 @@
 {
   "configId": 0,
-  "output_path": "./output-11/",
   "thread_n": 10,
-  "generations": 100,
-  "burnin_generations": 200,
+  "simulation_mode": "default",
+  "burnin_generations": 10,
+  "generations": 10,
   "aminoacids": "ACDEFGHIKLMNOPQRSTUVWY",
+  "output": {
+    "output_path": "./output-13/",
+    "individual_data_interval": 20,
+    "allele_data_interval": 1,
+    "locus_data_interval": 1,
+    "meta_data_interval": 1
+  },
   "hosts": {
     "n": 10000,
     "species_n":2,
@@ -12,7 +19,7 @@
     "alleles_per_species_initial": 75,
     "allele_sequence_length": 9,
     "genes_per_chromosome_initial": 1,
-    "mutation_rate_per_peptide": 0.000003
+    "mutation_rate_per_peptide": 0.00003
   },
   "pathogens": {
     "n": 10000,
