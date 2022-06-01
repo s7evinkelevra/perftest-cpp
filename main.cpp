@@ -8,7 +8,6 @@
 #include <algorithm>
 #include <vector>
 #include <deque>
-#include <boost/program_options.hpp>
 #include <unordered_map>
 
 #include "src/nlohmann/json.hpp"
@@ -25,35 +24,10 @@
 
 using json = nlohmann::json;
 
-namespace po = boost::program_options;
-
-
 
 
 int main(int argc, char const *argv[]) {
-    std::string configPath;
-
-    // setup command line arguments
-    po::options_description desc("Allowed options");
-    desc.add_options()
-        ("help,h", "produce help message")
-        ("config-file,c", po::value<std::string>(&configPath), "path to the config file");
-
-    po::variables_map vm;
-    po::store(po::parse_command_line(argc, argv, desc), vm);
-    po::notify(vm);
-
-    if(vm.count("help")) {
-        std::cout << desc << std::endl;
-        return 1;
-    }
-
-    if(vm.count("config-file")) {
-        std::cout << "using config at path " << configPath << std::endl;
-    }else{
-        std::cout << "no config path set, using path config.json" << std::endl;
-        configPath = "config.json";
-    }
+    std::string configPath = "config.json";
 
     // read config file
     std::ifstream configStream (configPath);
