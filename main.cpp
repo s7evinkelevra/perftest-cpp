@@ -91,16 +91,6 @@ int main(int argc, char const *argv[]) {
 
     env.setBurnInMode();
 
-    env.writeHostData();
-    env.writeHostGenomeData();
-    env.writeHostAlleleData();
-
-    env.writePathogenData();
-    env.writePathogenGenomeData();
-    env.writePathogenAlleleData();
-
-    env.writeMetaData();
-
     for(int burnin_generation = 0; burnin_generation < env.config["burnin_generations"]; burnin_generation++){
         env.step();
         if(burnin_generation % 10 == 0){
@@ -108,17 +98,7 @@ int main(int argc, char const *argv[]) {
         }
     }
 
-    env.writeHostData();
-    env.writeHostGenomeData();
-    env.writeHostAlleleData();
-
-    env.writePathogenData();
-    env.writePathogenGenomeData();
-    env.writePathogenAlleleData();
-
-    env.writeMetaData();
-
-    std::cout << "allele distribution across all loci: \n";
+/*    std::cout << "allele distribution across all loci: \n";
     std::vector<std::unordered_map<int,int>> allele_dist_per_species = env.hostPool.getAlleleDistributionAcrossAllLociPerSpecies();
 
     for (int species_i = 0; species_i < allele_dist_per_species.size(); species_i++){
@@ -140,25 +120,19 @@ int main(int argc, char const *argv[]) {
 
     std::cout << "before purge alleles in use in patho species 0: " << env.pathogenAllelePool.alleles[0].size() << "\n";
     env.purgeUnusedAlleles();
-    std::cout << "after purge alleles in use in patho species 0: " << env.pathogenAllelePool.alleles[0].size() << "\n";
+    std::cout << "after purge alleles in use in patho species 0: " << env.pathogenAllelePool.alleles[0].size() << "\n";*/
 
-    env.setDefaultMode();
+    if(env.config["simulation_mode"] == "no_coevolution"){
+        env.setNoCoevolutionMode();
+    }else{
+        env.setDefaultMode();
+    }
+
+
     for(int generation = 0; generation < env.config["generations"]; generation++){
         env.step();
-        env.writeHostAlleleData();
-
-        env.writePathogenAlleleData();
-
-        env.writeMetaData();
-
         if(generation % 20 == 0){
             env.purgeUnusedAlleles();
-            env.writeHostData();
-            env.writeHostGenomeData();
-
-            env.writePathogenData();
-            env.writePathogenGenomeData();
-
         }
     }
 

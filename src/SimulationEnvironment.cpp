@@ -117,7 +117,7 @@ void SimulationEnvironment::initializePathogenPool() {
 
 void SimulationEnvironment::initializeOutputFiles() {
     // create CSV writers and files
-    std::string output_base_path = config["output_path"];
+    std::string output_base_path = config["output"]["output_path"];
 
     if(std::filesystem::is_directory(output_base_path) || std::filesystem::exists(output_base_path)){
         std::filesystem::remove_all(output_base_path);
@@ -130,7 +130,7 @@ void SimulationEnvironment::initializeOutputFiles() {
     configFileStream << config.dump(4);
     configFileStream.close();
 
-    std::vector allele_CSV_headers = {"generation", "species", "locus_id", "allele_id", "parent_id", "count", "frequency"};
+    std::vector allele_CSV_headers = {"generation", "species", "locus_id", "parent_id", "allele_id","created_at", "count", "frequency"};
     std::vector locus_CSV_headers = {"generation", "species", "locus_id", "allele_count", "allelic_richness", "H_e", "H_o", "HWE"};
 
 
@@ -207,6 +207,7 @@ void SimulationEnvironment::initialize() {
     initializePathogenPool();
 
     initializeOutputFiles();
+    writeAllData();
 }
 
 // implement single simulation step
@@ -234,6 +235,25 @@ void SimulationEnvironment::step() {
     lastStepEnd = std::chrono::steady_clock::now();
 
 
+    int allele_data_interval = config["output"]["allele_data_interval"];
+    if(totalHostGenerations % allele_data_interval == 0){
+        writeHostAlleleData();
+        writePathogenAlleleData();
+    }
+
+    int locus_data_interval = config["output"]["locus_data_interval"];
+    if(totalHostGenerations % locus_data_interval == 0){
+        writeHostLocusData();
+        writePathogenLocusData();
+    }
+
+    int meta_data_interval = config["output"]["meta_data_interval"];
+    if(totalHostGenerations % meta_data_interval == 0){
+        writeMetaData();
+    }
+
+
+
     std::cout << "generation " << totalHostGenerations << " complete\n";
     std::cout << "time elapsed: "
               << std::chrono::duration_cast<std::chrono::milliseconds>(lastStepEnd - lastStepStart).count()
@@ -258,6 +278,16 @@ void SimulationEnvironment::hostGeneration() {
 
     // after n pathogen generations have passed (including n infections)
     // hosts move on in their lifecycle with reproduction and mutation
+
+    // infections are done, update and tally the fitness of the hosts
+    // necessary for logging
+    hostPool.updateFitness();
+
+    int individual_data_interval = config["output"]["individual_data_interval"];
+    if(totalHostGenerations % individual_data_interval == 0){
+        writeHostData();
+        writeHostGenomeData();
+    }
 
     // host reproduction
     //TODO(JAN): test all this
@@ -300,19 +330,6 @@ void SimulationEnvironment::hostMutation() {
 
                 unsigned long newAlleleId = hostAllelePool.addAllele(host_species_index, alleleId, totalHostGenerations, newSequence);
                 alleleId = (int)newAlleleId;
-
-
-                //std::cout << "new allele id: " << newAlleleId << "\nnew sequence: " << newSequence << "\n";
-                /*
-                for(int pathogen_species_i = 0; pathogen_species_i < pathogenAllelePool.alleles.size(); pathogen_species_i++ ){
-                    for( auto &pathogenHaplotype : pathogenAllelePool.alleles[pathogen_species_i] ){
-                        //TODO(JAN): test this
-                        if(pathogen_haplotype_dist[pathogen_species_i].find(pathogenHaplotype.id) != pathogen_haplotype_dist[pathogen_species_i].end()) continue; // skip this allele if no host actually carries it
-                        int levDistance = Helper::generate_merit(newSequence, pathogenHaplotype.sequence);
-                        meritCache.set(host_species_index, newAlleleId, pathogen_species_i, pathogenHaplotype.id, levDistance);
-                    }
-                }
-                */
             }
 
             for(int& alleleId : currentHost.chromosome_2_allele_ids){
@@ -332,19 +349,6 @@ void SimulationEnvironment::hostMutation() {
                 unsigned long newAlleleId = hostAllelePool.addAllele(host_species_index, alleleId, totalHostGenerations, newSequence);
                 alleleId = (int)newAlleleId;
 
-
-                //std::cout << "new allele id: " << newAlleleId << "\nnew sequence: " << newSequence << "\n";
-                /*
-                for(int pathogen_species_i = 0; pathogen_species_i < pathogenAllelePool.alleles.size(); pathogen_species_i++ ){
-                    for( auto &pathogenHaplotype : pathogenAllelePool.alleles[pathogen_species_i] ){
-                        //TODO(JAN): test this
-                        if(pathogen_haplotype_dist[pathogen_species_i].find(pathogenHaplotype.id) != pathogen_haplotype_dist[pathogen_species_i].end()) continue; // skip this allele if no host actually carries it
-
-                        int levDistance = Helper::generate_merit(newSequence, pathogenHaplotype.sequence);
-                        meritCache.set(host_species_index, alleleId, pathogen_species_i, pathogenHaplotype.id, levDistance);
-                    }
-                }
-                */
             }
 
         }
@@ -352,9 +356,6 @@ void SimulationEnvironment::hostMutation() {
 }
 
 void SimulationEnvironment::hostReproduction() {
-    // infections are done, update and tally the fitness of the hosts
-    hostPool.updateFitness();
-
     double dice;
     int totalTries = 0;
 
@@ -470,6 +471,16 @@ void SimulationEnvironment::pathogenGeneration() {
         infection();
     }
 
+    // calculate fitness of hosts/pathogens and their sums after infection took place
+    pathogenPool.updateFitness();
+
+    int individual_data_interval = config["output"]["individual_data_interval"];
+    int pathogen_generations_per_host_generation = config["infection"]["infections_per_generation"];
+    if((totalHostGenerations % (individual_data_interval * pathogen_generations_per_host_generation)) == 0){
+        writePathogenData();
+        writePathogenGenomeData();
+    }
+
     if(bPathogenFitnessproportionalReproduction){
         pathogenReproduction();
     }else{
@@ -528,8 +539,7 @@ void SimulationEnvironment::pathogenMutation() {
 }
 
 void SimulationEnvironment::pathogenReproduction() {
-    // calculate fitness of hosts/pathogens and their sums after infection took place
-    pathogenPool.updateFitness();
+
 
     // pathogen reproduction
     // infection count/fitness is cleared during this step!!
@@ -687,6 +697,8 @@ void SimulationEnvironment::setNoCoevolutionMode() {
 }
 
 void SimulationEnvironment::writeHostData() {
+    std::cout << "writing host data" << "\n";
+
     for(int host_species_i = 0; host_species_i < hostPool.hosts.size(); host_species_i++){
         for(int host_i = 0; host_i < hostPool.hosts[host_species_i].size(); host_i++){
 
@@ -708,6 +720,8 @@ void SimulationEnvironment::writeHostData() {
 }
 
 void SimulationEnvironment::writeHostGenomeData() {
+    std::cout << "writing host genome data" << "\n";
+
     for(int host_species_i = 0; host_species_i < hostPool.hosts.size(); host_species_i++){
         for(int host_i = 0; host_i < hostPool.hosts[host_species_i].size(); host_i++){
             Host& currentHost = hostPool.hosts[host_species_i][host_i];
@@ -729,7 +743,7 @@ void SimulationEnvironment::writeHostGenomeData() {
 }
 
 void SimulationEnvironment::writeHostAlleleData() {
-    //std::cout << "writing host allele data" << "\n";
+    std::cout << "writing host allele data" << "\n";
     for(int host_species_i = 0; host_species_i < hostPool.hosts.size(); host_species_i++){
 
         for(int locus_i = 0; locus_i < hostPool.max_loci_count; locus_i++){
@@ -746,8 +760,9 @@ void SimulationEnvironment::writeHostAlleleData() {
                         std::to_string(totalHostGenerations),
                         std::to_string(host_species_i),
                         std::to_string(locus_i),
-                        std::to_string(item.first),
                         std::to_string(current_allele.parentId),
+                        std::to_string(item.first),
+                        std::to_string(current_allele.createdAtGeneration),
                         std::to_string(item.second),
                         std::to_string((float) item.second / (float) allele_count_sum)
                 };
@@ -759,6 +774,8 @@ void SimulationEnvironment::writeHostAlleleData() {
 }
 
 void SimulationEnvironment::writeMetaData() {
+    std::cout << "writing meta data" << "\n";
+
     std::vector<std::string> props = {
             std::to_string(totalHostGenerations),
             std::to_string(totalPathogenGenerations),
@@ -773,6 +790,8 @@ void SimulationEnvironment::writeMetaData() {
 }
 
 void SimulationEnvironment::writePathogenData() {
+    std::cout << "writing pathogen data" << "\n";
+
     for (int patho_species_i = 0; patho_species_i < pathogenPool.pathogens.size(); patho_species_i++){
         for (int pathogen_i = 0; pathogen_i < pathogenPool.pathogens[patho_species_i].size(); pathogen_i++){
 
@@ -792,6 +811,8 @@ void SimulationEnvironment::writePathogenData() {
 }
 
 void SimulationEnvironment::writePathogenGenomeData() {
+    std::cout << "writing pathogen genome data" << "\n";
+
     for (int patho_species_i = 0; patho_species_i < pathogenPool.pathogens.size(); patho_species_i++){
         for (int pathogen_i = 0; pathogen_i < pathogenPool.pathogens[patho_species_i].size(); pathogen_i++){
 
@@ -807,9 +828,7 @@ void SimulationEnvironment::writePathogenGenomeData() {
 }
 
 void SimulationEnvironment::writePathogenAlleleData() {
-    // csv shape
-    // "generation", "species", "locus_id", "allele_id", "parent_id", "count", "frequency"
-    
+    std::cout << "writing pathogen allele data" << "\n";
 
     for(int patho_species_i = 0; patho_species_i < pathogenPool.pathogens.size(); patho_species_i++){
         std::unordered_map<int,int> haplotype_dist = pathogenPool.getHaplotypeDistribution(patho_species_i);
@@ -826,8 +845,9 @@ void SimulationEnvironment::writePathogenAlleleData() {
                 std::to_string(totalPathogenGenerations),
                 std::to_string(patho_species_i),
                 std::to_string(0),
-                std::to_string(item.first),
                 std::to_string(currentHaplotype.parentId),
+                std::to_string(item.first),
+                std::to_string(currentHaplotype.createdAtGeneration),
                 std::to_string(item.second),
                 std::to_string((float)item.second/(float)haplotype_count_sum)
             };
@@ -836,6 +856,33 @@ void SimulationEnvironment::writePathogenAlleleData() {
         }
     }
 }
+
+void SimulationEnvironment::writeHostLocusData() {
+    std::cout << "writing host locus data [not implemented]" << "\n";
+
+}
+
+void SimulationEnvironment::writePathogenLocusData() {
+    std::cout << "writing pathogen locus data [not implemented]" << "\n";
+
+}
+
+void SimulationEnvironment::writeAllData() {
+    writeHostData();
+    writeHostGenomeData();
+
+    writePathogenData();
+    writePathogenGenomeData();
+
+    writeHostAlleleData();
+    writePathogenAlleleData();
+
+    writeHostLocusData();
+    writePathogenLocusData();
+
+    writeMetaData();
+}
+
 
 void SimulationEnvironment::purgeUnusedAlleles(){
     for(int host_species_i = 0; host_species_i < hostAllelePool.alleles.size(); host_species_i++){
@@ -849,3 +896,4 @@ void SimulationEnvironment::purgeUnusedAlleles(){
     }
 
 }
+

@@ -97,6 +97,8 @@ public:
 
     void writeMetaData();
 
+    void writeAllData();
+
     // housekeeping
     void purgeUnusedAlleles();
 
