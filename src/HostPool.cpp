@@ -80,7 +80,7 @@ void HostPool::updateFitness() {
 void HostPool::updateMaxLociCount() {
     for(int species_i = 0; species_i < hosts.size(); species_i++){
         for(auto& host : hosts[species_i]){
-            max_loci_count = std::max({(int)max_loci_count, (int)host.chromosome_1_allele_ids.size(), (int)host.chromosome_2_allele_ids.size()});
+            //max_loci_count = std::max({(int)max_loci_count, (int)host.chromosome_1_allele_ids.size(), (int)host.chromosome_2_allele_ids.size()});
         }
     }
 }
