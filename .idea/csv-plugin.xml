@@ -87,6 +87,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\cmake-build-release\output-14\pathogen_data.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\cmake-build-release\output\host_allele_data.csv">
           <value>
             <Attribute>
