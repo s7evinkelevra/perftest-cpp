@@ -274,6 +274,7 @@ void SimulationEnvironment::hostGeneration() {
     // begin pathogen generations per host generation
     for(int pathogen_generation = 0; pathogen_generation < config["infection"]["infections_per_generation"]; pathogen_generation++){
         pathogenGeneration();
+        std::cout << "pathogen generation " << totalPathogenGenerations << " done.\n";
     }
 
     // after n pathogen generations have passed (including n infections)
@@ -291,16 +292,19 @@ void SimulationEnvironment::hostGeneration() {
 
     // host reproduction
     //TODO(JAN): test all this
-    std::cout << "Host reproduction\n";
     if(bHostFitnessproportionalReproduction){
         hostReproduction();
     }else{
         hostReproductionRandom();
     }
 
+    std::cout << "host reproduction done.\n";
+
+
     // host mutation
     if(bHostMutation){
         hostMutation();
+        std::cout << "host mutation done.\n";
     }
 }
 
@@ -369,7 +373,7 @@ void SimulationEnvironment::hostReproduction() {
 
         unsigned int hostIdBase = hostPool.hosts[host_species_index].size() * totalHostGenerations;
 
-        std::cout << "species total fitness: " << hostPool.fitness_sum[host_species_index] << std::endl;
+        //std::cout << "species total fitness: " << hostPool.fitness_sum[host_species_index] << std::endl;
         // need to select double the hosts -> two parents per new host
         while(selectedParents < hostPool.hosts[host_species_index].size() * 2){
 
@@ -471,12 +475,16 @@ void SimulationEnvironment::pathogenGeneration() {
         infection();
     }
 
+    std::cout << "infection done.\n";
+
+
     // calculate fitness of hosts/pathogens and their sums after infection took place
     pathogenPool.updateFitness();
 
     int individual_data_interval = config["output"]["individual_data_interval"];
     int pathogen_generations_per_host_generation = config["infection"]["infections_per_generation"];
-    if((totalHostGenerations % (individual_data_interval * pathogen_generations_per_host_generation)) == 0){
+    int pathogen_logging_interval = individual_data_interval * pathogen_generations_per_host_generation;
+    if(totalHostGenerations % pathogen_logging_interval == 0){
         writePathogenData();
         writePathogenGenomeData();
     }
@@ -487,8 +495,12 @@ void SimulationEnvironment::pathogenGeneration() {
         pathogenReproductionRandom();
     }
 
+    std::cout << "pathogen reproduction done.\n";
+
+
     if(bPathogenMutation){
         pathogenMutation();
+        std::cout << "pathogen mutation done.\n";
     }
 }
 
@@ -555,7 +567,7 @@ void SimulationEnvironment::pathogenReproduction() {
 
         unsigned int pathogenIdBase = pathogenPool.pathogens[patho_species_index].size() * totalPathogenGenerations;
 
-        std::cout << "species total fitness: " << pathogenPool.fitness_sum[patho_species_index] << std::endl;
+        //std::cout << "species total fitness: " << pathogenPool.fitness_sum[patho_species_index] << std::endl;
         while(selectedPathogens < pathogenPool.pathogens[patho_species_index].size()){
             dice = rng.sampleRealUniDouble(0, pathogenPool.fitness_sum[patho_species_index]);
 
@@ -573,7 +585,7 @@ void SimulationEnvironment::pathogenReproduction() {
         pathogenPool.pathogens[patho_species_index] = nextGenerationPathogens;
     }
 
-    std::cout << "total tries: " << totalTries << std::endl;
+    //std::cout << "total tries: " << totalTries << std::endl;
 }
 
 void SimulationEnvironment::pathogenReproductionRandom() {
@@ -605,6 +617,7 @@ void SimulationEnvironment::infection() {
         for(int host_index = 0; host_index < host_pop_size; host_index++) {
             Host& selectedHost = hostPool.hosts[host_species_index][host_index];
 
+            //#pragma omp parallel for default(none) shared(selectedHost, host_species_index)
             for(int patho_species_index = 0; patho_species_index < pathogenPool.pathogens.size(); patho_species_index++){
                 int selectedPathogenIndex = rng.sampleIntUniUnsignedInt(0, pathogenPool.pathogens[patho_species_index].size() - 1);
                 Pathogen& selectedPathogen =  pathogenPool.pathogens[patho_species_index][selectedPathogenIndex];
