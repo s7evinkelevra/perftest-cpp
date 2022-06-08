@@ -484,7 +484,7 @@ void SimulationEnvironment::pathogenGeneration() {
     int individual_data_interval = config["output"]["individual_data_interval"];
     int pathogen_generations_per_host_generation = config["infection"]["infections_per_generation"];
     int pathogen_logging_interval = individual_data_interval * pathogen_generations_per_host_generation;
-    if(totalHostGenerations % pathogen_logging_interval == 0){
+    if(totalPathogenGenerations % pathogen_logging_interval == 0){
         writePathogenData();
         writePathogenGenomeData();
     }
