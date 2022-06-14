@@ -6,7 +6,7 @@
   "generations": 50,
   "aminoacids": "ACDEFGHIKLMNOPQRSTUVWY",
   "output": {
-    "output_path": "./output-16/",
+    "output_base_path": "./output/",
     "individual_data_interval": 20,
     "allele_data_interval": 1,
     "locus_data_interval": 1,

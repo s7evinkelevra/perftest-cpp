@@ -117,16 +117,22 @@ void SimulationEnvironment::initializePathogenPool() {
 
 void SimulationEnvironment::initializeOutputFiles() {
     // create CSV writers and files
-    std::string output_base_path = config["output"]["output_path"];
+    std::string output_base_path = config["output"]["output_base_path"];
+    int configId = config["configId"];
+    std::string output_full_path = output_base_path + "config-" + std::to_string(configId) + "/";
 
-    if(std::filesystem::is_directory(output_base_path) || std::filesystem::exists(output_base_path)){
-        std::filesystem::remove_all(output_base_path);
+    if(!std::filesystem::is_directory(output_base_path) || !std::filesystem::exists(output_base_path)){
+        std::filesystem::create_directory(output_base_path);
     }
 
-    std::filesystem::create_directory(output_base_path);
+    if(std::filesystem::is_directory(output_full_path) || std::filesystem::exists(output_full_path)){
+        std::filesystem::remove_all(output_full_path);
+    }
+
+    std::filesystem::create_directory(output_full_path);
 
     // copy config file to output dir
-    std::ofstream configFileStream(output_base_path + "config.json");
+    std::ofstream configFileStream(output_full_path + "config.json");
     configFileStream << config.dump(4);
     configFileStream.close();
 
@@ -135,36 +141,36 @@ void SimulationEnvironment::initializeOutputFiles() {
 
 
     std::vector host_CSV_headers = {"generation", "species", "id", "parent_1_id", "parent_2_id", "successful_presentations", "unsuccessful_presentations", "total_presentations", "fitness"};
-    hostDataCSV = std::make_unique<CSVWriter>(output_base_path + "host_data.csv", ";");
+    hostDataCSV = std::make_unique<CSVWriter>(output_full_path + "host_data.csv", ";");
     hostDataCSV->addRow(host_CSV_headers.begin(), host_CSV_headers.end());
 
     std::vector host_genome_CSV_headers = {"generation", "species", "id", "locus_id", "allele_1_id", "allele_2_id"};
-    hostGenomeDataCSV = std::make_unique<CSVWriter>(output_base_path + "host_genome_data.csv", ";");
+    hostGenomeDataCSV = std::make_unique<CSVWriter>(output_full_path + "host_genome_data.csv", ";");
     hostGenomeDataCSV->addRow(host_genome_CSV_headers.begin(), host_genome_CSV_headers.end());
 
-    hostAlleleDataCSV = std::make_unique<CSVWriter>(output_base_path + "host_allele_data.csv", ";");
+    hostAlleleDataCSV = std::make_unique<CSVWriter>(output_full_path + "host_allele_data.csv", ";");
     hostAlleleDataCSV->addRow(allele_CSV_headers.begin(), allele_CSV_headers.end());
 
-    hostLocusDataCSV = std::make_unique<CSVWriter>(output_base_path + "host_locus_data.csv", ";");
+    hostLocusDataCSV = std::make_unique<CSVWriter>(output_full_path + "host_locus_data.csv", ";");
     hostLocusDataCSV->addRow(locus_CSV_headers.begin(), locus_CSV_headers.end());
 
 
     std::vector pathogen_CSV_headers = {"generation", "species", "id", "parent_id", "successful_infections", "unsuccessful_infections", "total_infections", "fitness"};
-    pathogenDataCSV = std::make_unique<CSVWriter>(output_base_path + "pathogen_data.csv", ";");
+    pathogenDataCSV = std::make_unique<CSVWriter>(output_full_path + "pathogen_data.csv", ";");
     pathogenDataCSV->addRow(pathogen_CSV_headers.begin(), pathogen_CSV_headers.end());
 
     std::vector pathogen_genome_CSV_headers = {"generation", "species", "id", "haplotype_id"};
-    pathogenGenomeDataCSV = std::make_unique<CSVWriter>(output_base_path + "pathogen_genome_data.csv", ";");
+    pathogenGenomeDataCSV = std::make_unique<CSVWriter>(output_full_path + "pathogen_genome_data.csv", ";");
     pathogenGenomeDataCSV->addRow(pathogen_genome_CSV_headers.begin(), pathogen_genome_CSV_headers.end());
 
-    pathogenAlleleDataCSV = std::make_unique<CSVWriter>(output_base_path + "pathogen_allele_data.csv", ";");
+    pathogenAlleleDataCSV = std::make_unique<CSVWriter>(output_full_path + "pathogen_allele_data.csv", ";");
     pathogenAlleleDataCSV->addRow(allele_CSV_headers.begin(), allele_CSV_headers.end());
 
-    pathogenLocusDataCSV = std::make_unique<CSVWriter>(output_base_path + "pathogen_locus_data.csv", ";");
+    pathogenLocusDataCSV = std::make_unique<CSVWriter>(output_full_path + "pathogen_locus_data.csv", ";");
     pathogenLocusDataCSV->addRow(locus_CSV_headers.begin(), locus_CSV_headers.end());
 
     std::vector meta_CSV_headers = {"generation", "pathogen_generation", "bInfection", "bHostFitnessproportionalReproduction", "bPathogenFitnessproportionalReproduction", "bHostMutation", "bPathogenMutation", "step_duration"};
-    metaDataCSV = std::make_unique<CSVWriter>(output_base_path + "meta_data.csv", ";");
+    metaDataCSV = std::make_unique<CSVWriter>(output_full_path + "meta_data.csv", ";");
     metaDataCSV->addRow(meta_CSV_headers.begin(), meta_CSV_headers.end());
 
 }
