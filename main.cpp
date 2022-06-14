@@ -9,6 +9,7 @@
 #include <vector>
 #include <deque>
 #include <unordered_map>
+#include <stdexcept>
 
 #include "src/nlohmann/json.hpp"
 
@@ -27,8 +28,18 @@ using json = nlohmann::json;
 
 
 int main(int argc, char const *argv[]) {
-    std::string configPath = "config.json";
+    std::string configPath;
 
+    if(argc == 1){
+        configPath = "config.json";
+    }else if(argc == 2){
+        configPath = argv[1];
+    }else{
+        std::cout << "too many arguemnts given. Expecing none for default config path or one for custom config path." << std::endl;
+        return 1;
+    }
+
+    std::cout << "config path: " << configPath << std::endl;
     // read config file
     std::ifstream configStream (configPath);
     if(!configStream){
