@@ -241,24 +241,10 @@ void SimulationEnvironment::step() {
     lastStepEnd = std::chrono::steady_clock::now();
 
 
-    int allele_data_interval = config["output"]["allele_data_interval"];
-    if(totalHostGenerations % allele_data_interval == 0){
-        writeHostAlleleData();
-        writePathogenAlleleData();
-    }
-
-    int locus_data_interval = config["output"]["locus_data_interval"];
-    if(totalHostGenerations % locus_data_interval == 0){
-        writeHostLocusData();
-        writePathogenLocusData();
-    }
-
     int meta_data_interval = config["output"]["meta_data_interval"];
     if(totalHostGenerations % meta_data_interval == 0){
         writeMetaData();
     }
-
-
 
     std::cout << "generation " << totalHostGenerations << " complete\n";
     std::cout << "time elapsed: "
@@ -290,8 +276,8 @@ void SimulationEnvironment::hostGeneration() {
     // necessary for logging
     hostPool.updateFitness();
 
-    int individual_data_interval = config["output"]["individual_data_interval"];
-    if(totalHostGenerations % individual_data_interval == 0){
+    int host_individual_data_interval = config["output"]["host_individual_data_interval"];
+    if(host_individual_data_interval != -1 && totalHostGenerations % host_individual_data_interval == 0){
         writeHostData();
         writeHostGenomeData();
     }
@@ -312,6 +298,19 @@ void SimulationEnvironment::hostGeneration() {
         hostMutation();
         std::cout << "host mutation done.\n";
     }
+
+
+    int host_allele_data_interval = config["output"]["host_allele_data_interval"];
+    if(host_allele_data_interval != -1 && totalHostGenerations % host_allele_data_interval == 0){
+        writeHostAlleleData();
+    }
+
+    int host_locus_data_interval = config["output"]["host_locus_data_interval"];
+    if(host_locus_data_interval != -1 && totalHostGenerations % host_locus_data_interval == 0){
+        writeHostLocusData();
+    }
+
+
 }
 
 void SimulationEnvironment::hostMutation() {
@@ -487,10 +486,9 @@ void SimulationEnvironment::pathogenGeneration() {
     // calculate fitness of hosts/pathogens and their sums after infection took place
     pathogenPool.updateFitness();
 
-    int individual_data_interval = config["output"]["individual_data_interval"];
-    int pathogen_generations_per_host_generation = config["infection"]["infections_per_generation"];
-    int pathogen_logging_interval = individual_data_interval * pathogen_generations_per_host_generation;
-    if(totalPathogenGenerations % pathogen_logging_interval == 0){
+    int pathogen_individual_data_interval = config["output"]["pathogen_individual_data_interval"];
+
+    if(pathogen_individual_data_interval != -1 && totalPathogenGenerations % pathogen_individual_data_interval == 0){
         writePathogenData();
         writePathogenGenomeData();
     }
@@ -507,6 +505,17 @@ void SimulationEnvironment::pathogenGeneration() {
     if(bPathogenMutation){
         pathogenMutation();
         std::cout << "pathogen mutation done.\n";
+    }
+
+
+    int pathogen_allele_data_interval = config["output"]["pathogen_allele_data_interval"];
+    if(pathogen_allele_data_interval != -1 && totalPathogenGenerations % pathogen_allele_data_interval == 0){
+        writePathogenAlleleData();
+    }
+
+    int pathogen_locus_data_interval = config["output"]["pathogen_locus_data_interval"];
+    if(pathogen_locus_data_interval != -1 && totalPathogenGenerations % pathogen_locus_data_interval == 0){
+        writePathogenLocusData();
     }
 }
 
