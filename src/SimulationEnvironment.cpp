@@ -911,6 +911,22 @@ void SimulationEnvironment::writeAllData() {
     writeMetaData();
 }
 
+void SimulationEnvironment::flushAllDataToDisk() {
+    hostDataCSV->flush();
+    pathogenDataCSV->flush();
+
+    hostGenomeDataCSV->flush();
+    pathogenGenomeDataCSV->flush();
+
+    hostAlleleDataCSV->flush();
+    pathogenAlleleDataCSV->flush();
+
+    hostLocusDataCSV->flush();
+    pathogenLocusDataCSV->flush();
+
+    metaDataCSV->flush();
+}
+
 
 void SimulationEnvironment::purgeUnusedAlleles(){
     for(int host_species_i = 0; host_species_i < hostAllelePool.alleles.size(); host_species_i++){

@@ -109,6 +109,8 @@ int main(int argc, char const *argv[]) {
         }
     }
 
+    env.flushAllDataToDisk();
+
 /*    std::cout << "allele distribution across all loci: \n";
     std::vector<std::unordered_map<int,int>> allele_dist_per_species = env.hostPool.getAlleleDistributionAcrossAllLociPerSpecies();
 
@@ -142,6 +144,7 @@ int main(int argc, char const *argv[]) {
 
     for(int generation = 0; generation < env.config["generations"]; generation++){
         env.step();
+        env.flushAllDataToDisk();
         if(generation % 20 == 0){
             env.purgeUnusedAlleles();
         }

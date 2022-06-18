@@ -99,6 +99,7 @@ public:
 
     void writeAllData();
 
+    void flushAllDataToDisk();
     // housekeeping
     void purgeUnusedAlleles();
 

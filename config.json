@@ -1,9 +1,9 @@
 {
-  "configId": 1,
+  "configId": 2,
   "thread_n": 20,
   "simulation_mode": "default",
-  "burnin_generations": 100,
-  "generations": 0,
+  "burnin_generations": 50,
+  "generations": 50,
   "aminoacids": "ACDEFGHIKLMNOPQRSTUVWY",
   "output": {
     "output_base_path": "./output/",

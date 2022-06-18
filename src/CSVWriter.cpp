@@ -6,3 +6,6 @@
 
 #include <utility>
 
+void CSVWriter::flush() {
+  _file.flush();
+}

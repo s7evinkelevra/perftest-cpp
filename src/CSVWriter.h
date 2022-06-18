@@ -31,6 +31,8 @@ public:
     template<typename T>
     void addRow(T first, T last);
 
+    void flush();
+
 };
 
 template<typename T>
