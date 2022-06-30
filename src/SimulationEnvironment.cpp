@@ -137,6 +137,8 @@ void SimulationEnvironment::initializeOutputFiles() {
     configFileStream.close();
 
     std::vector allele_CSV_headers = {"generation", "species", "locus_id", "parent_id", "allele_id","created_at", "count", "frequency"};
+    std::vector allele_sequence_CSV_headers = {"generation", "species", "parent_id", "allele_id","created_at", "sequence"};
+
     std::vector locus_CSV_headers = {"generation", "species", "locus_id", "allele_count", "allelic_richness", "H_e", "H_o", "HWE"};
 
 
@@ -150,6 +152,9 @@ void SimulationEnvironment::initializeOutputFiles() {
 
     hostAlleleDataCSV = std::make_unique<CSVWriter>(output_full_path + "host_allele_data.csv", ";");
     hostAlleleDataCSV->addRow(allele_CSV_headers.begin(), allele_CSV_headers.end());
+
+    hostAlleleSequenceDataCSV = std::make_unique<CSVWriter>(output_full_path + "host_allele_sequence_data.csv", ";");
+    hostAlleleSequenceDataCSV->addRow(allele_sequence_CSV_headers.begin(), allele_sequence_CSV_headers.end());
 
     hostLocusDataCSV = std::make_unique<CSVWriter>(output_full_path + "host_locus_data.csv", ";");
     hostLocusDataCSV->addRow(locus_CSV_headers.begin(), locus_CSV_headers.end());
@@ -165,6 +170,9 @@ void SimulationEnvironment::initializeOutputFiles() {
 
     pathogenAlleleDataCSV = std::make_unique<CSVWriter>(output_full_path + "pathogen_allele_data.csv", ";");
     pathogenAlleleDataCSV->addRow(allele_CSV_headers.begin(), allele_CSV_headers.end());
+
+    pathogenAlleleSequenceDataCSV = std::make_unique<CSVWriter>(output_full_path + "pathogen_allele_sequence_data.csv", ";");
+    pathogenAlleleSequenceDataCSV->addRow(allele_sequence_CSV_headers.begin(), allele_sequence_CSV_headers.end());
 
     pathogenLocusDataCSV = std::make_unique<CSVWriter>(output_full_path + "pathogen_locus_data.csv", ";");
     pathogenLocusDataCSV->addRow(locus_CSV_headers.begin(), locus_CSV_headers.end());
@@ -303,6 +311,11 @@ void SimulationEnvironment::hostGeneration() {
     int host_allele_data_interval = config["output"]["host_allele_data_interval"];
     if(host_allele_data_interval != -1 && totalHostGenerations % host_allele_data_interval == 0){
         writeHostAlleleData();
+    }
+
+    int host_allele_sequence_data_interval = config["output"]["host_allele_sequence_data_interval"];
+    if(host_allele_sequence_data_interval != -1 && totalHostGenerations % host_allele_sequence_data_interval == 0){
+        writeHostAlleleSequenceData();
     }
 
     int host_locus_data_interval = config["output"]["host_locus_data_interval"];
@@ -511,6 +524,11 @@ void SimulationEnvironment::pathogenGeneration() {
     int pathogen_allele_data_interval = config["output"]["pathogen_allele_data_interval"];
     if(pathogen_allele_data_interval != -1 && totalPathogenGenerations % pathogen_allele_data_interval == 0){
         writePathogenAlleleData();
+    }
+
+    int pathogen_allele_sequence_data_interval = config["output"]["pathogen_allele_sequence_data_interval"];
+    if(pathogen_allele_sequence_data_interval != -1 && totalPathogenGenerations % pathogen_allele_sequence_data_interval == 0){
+        writePathogenAlleleSequenceData();
     }
 
     int pathogen_locus_data_interval = config["output"]["pathogen_locus_data_interval"];
@@ -765,7 +783,6 @@ void SimulationEnvironment::writeHostGenomeData() {
                 };
                 hostGenomeDataCSV->addRow(props.begin(), props.end());
             }
-
         }
     }
 }
@@ -799,6 +816,28 @@ void SimulationEnvironment::writeHostAlleleData() {
         }
     }
 
+}
+
+
+void SimulationEnvironment::writeHostAlleleSequenceData() {
+    std::cout << "writing host allele seqeuence data" << "\n";
+
+    for(int host_species_i = 0; host_species_i < hostPool.hosts.size(); host_species_i++){
+        for(auto& allele_item : hostAllelePool.alleles[host_species_i]){
+            const Allele& current_allele = allele_item.second;
+
+            std::vector<std::string> props = {
+                    std::to_string(totalHostGenerations),
+                    std::to_string(host_species_i),
+                    std::to_string(current_allele.parentId),
+                    std::to_string(current_allele.id),
+                    std::to_string(current_allele.createdAtGeneration),
+                    current_allele.sequence
+            };
+
+            hostAlleleSequenceDataCSV->addRow(props.begin(), props.end());
+        }
+    }
 }
 
 void SimulationEnvironment::writeMetaData() {
@@ -885,6 +924,28 @@ void SimulationEnvironment::writePathogenAlleleData() {
     }
 }
 
+
+void SimulationEnvironment::writePathogenAlleleSequenceData() {
+    std::cout << "writing pathogen allele sequence data" << "\n";
+
+    for(int patho_species_i = 0; patho_species_i < pathogenPool.pathogens.size(); patho_species_i++){
+        for(auto& allele_item : pathogenAllelePool.alleles[patho_species_i]){
+            const Allele& current_allele = allele_item.second;
+
+            std::vector<std::string> props = {
+                    std::to_string(totalPathogenGenerations),
+                    std::to_string(patho_species_i),
+                    std::to_string(current_allele.parentId),
+                    std::to_string(current_allele.id),
+                    std::to_string(current_allele.createdAtGeneration),
+                    current_allele.sequence
+            };
+
+            pathogenAlleleSequenceDataCSV->addRow(props.begin(), props.end());
+        }
+    }
+}
+
 void SimulationEnvironment::writeHostLocusData() {
     std::cout << "writing host locus data [not implemented]" << "\n";
 
@@ -905,6 +966,9 @@ void SimulationEnvironment::writeAllData() {
     writeHostAlleleData();
     writePathogenAlleleData();
 
+    writeHostAlleleSequenceData();
+    writePathogenAlleleSequenceData();
+
     writeHostLocusData();
     writePathogenLocusData();
 
@@ -920,6 +984,9 @@ void SimulationEnvironment::flushAllDataToDisk() {
 
     hostAlleleDataCSV->flush();
     pathogenAlleleDataCSV->flush();
+
+    hostAlleleSequenceDataCSV->flush();
+    pathogenAlleleSequenceDataCSV->flush();
 
     hostLocusDataCSV->flush();
     pathogenLocusDataCSV->flush();

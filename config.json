@@ -1,36 +1,38 @@
 {
-  "configId": 2,
-  "thread_n": 20,
+  "configId": 163,
+  "thread_n": 32,
   "simulation_mode": "default",
-  "burnin_generations": 50,
-  "generations": 50,
-  "aminoacids": "ACDEFGHIKLMNOPQRSTUVWY",
+  "burnin_generations": 100,
+  "generations": 100,
+  "aminoacids": "ARNDCQGEHILKMFPSTWYV",
   "output": {
     "output_base_path": "./output/",
-    "host_individual_data_interval": 20,
-    "pathogen_individual_data_interval": 200,
+    "host_individual_data_interval": 50,
+    "pathogen_individual_data_interval": 500,
     "host_allele_data_interval": 1,
-    "pathogen_allele_data_interval": 20,
+    "pathogen_allele_data_interval": 500,
+    "host_allele_sequence_data_interval": -1,
+    "pathogen_allele_sequence_data_interval": -1,
     "host_locus_data_interval": 1,
-    "pathogen_locus_data_interval": 40,
+    "pathogen_locus_data_interval": 50,
     "meta_data_interval": 1
   },
   "hosts": {
     "n": 10000,
-    "species_n":2,
+    "species_n": 1,
     "initial_fitness": -1,
-    "alleles_per_species_initial": 75,
+    "alleles_per_species_initial": 100,
     "allele_sequence_length": 9,
     "genes_per_chromosome_initial": 1,
-    "mutation_rate_per_peptide": 0.00003
+    "mutation_rate_per_peptide": 0.0000000414
   },
   "pathogens": {
     "n": 10000,
-    "species_n":2,
+    "species_n": 4,
     "initial_fitness": -1,
     "haplotypes_per_species_initial": 10,
     "haplotype_sequence_length": 2000,
-    "mutation_rate_per_peptide": 0.003
+    "mutation_rate_per_peptide": 0.00003
   },
   "infection": {
     "infections_per_generation": 10,

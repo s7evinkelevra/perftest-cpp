@@ -32,11 +32,13 @@ private:
     std::unique_ptr<CSVWriter> hostDataCSV;
     std::unique_ptr<CSVWriter> hostGenomeDataCSV;
     std::unique_ptr<CSVWriter> hostAlleleDataCSV;
+    std::unique_ptr<CSVWriter> hostAlleleSequenceDataCSV;
     std::unique_ptr<CSVWriter> hostLocusDataCSV;
 
     std::unique_ptr<CSVWriter> pathogenDataCSV;
     std::unique_ptr<CSVWriter> pathogenGenomeDataCSV;
     std::unique_ptr<CSVWriter> pathogenAlleleDataCSV;
+    std::unique_ptr<CSVWriter> pathogenAlleleSequenceDataCSV;
     std::unique_ptr<CSVWriter> pathogenLocusDataCSV;
 
     std::unique_ptr<CSVWriter> metaDataCSV;
@@ -88,11 +90,13 @@ public:
     void writeHostData();
     void writeHostGenomeData();
     void writeHostAlleleData();
+    void writeHostAlleleSequenceData();
     void writeHostLocusData();
 
     void writePathogenData();
     void writePathogenGenomeData();
     void writePathogenAlleleData();
+    void writePathogenAlleleSequenceData();
     void writePathogenLocusData();
 
     void writeMetaData();

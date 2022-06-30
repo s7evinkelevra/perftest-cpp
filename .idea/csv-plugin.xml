@@ -94,6 +94,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\output-16\pathogen_genome_data.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
       </map>
     </option>
   </component>

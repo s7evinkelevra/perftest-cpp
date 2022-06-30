@@ -15,7 +15,6 @@ unsigned long AllelePool::addAllele(int species_id, int parent_id, int created_a
     return allele_count;
 }
 
-//TODO(JAN): completely untested
 void AllelePool::purgeUnused(int species_id, std::unordered_map<int,int>& allele_dist){
     std::unordered_map<int, Allele> used_alleles;
     used_alleles.reserve(allele_dist.size());

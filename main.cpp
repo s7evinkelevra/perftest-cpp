@@ -102,12 +102,19 @@ int main(int argc, char const *argv[]) {
 
     env.setBurnInMode();
 
+    env.writeHostAlleleSequenceData();
+    env.writePathogenAlleleSequenceData();
+
     for(int burnin_generation = 0; burnin_generation < env.config["burnin_generations"]; burnin_generation++){
         env.step();
         if(burnin_generation % 10 == 0){
             env.purgeUnusedAlleles();
         }
     }
+
+    env.purgeUnusedAlleles();
+    env.writeHostAlleleSequenceData();
+    env.writePathogenAlleleSequenceData();
 
     env.flushAllDataToDisk();
 
@@ -150,6 +157,9 @@ int main(int argc, char const *argv[]) {
         }
     }
 
+    env.purgeUnusedAlleles();
+    env.writeHostAlleleSequenceData();
+    env.writePathogenAlleleSequenceData();
 
 
 
