@@ -16,11 +16,11 @@ SimulationEnvironment::SimulationEnvironment(json initialConfig){
     totalHostGenerations = 0;
     totalPathogenGenerations = 0;
 
-    bInfection = true;
-    bHostFitnessproportionalReproduction = true;
-    bPathogenFitnessproportionalReproduction = true;
-    bHostMutation = true;
-    bPathogenMutation = true;
+    bInfection = false;
+    bHostFitnessproportionalReproduction = false;
+    bPathogenFitnessproportionalReproduction = false;
+    bHostMutation = false;
+    bPathogenMutation = false;
 
     rng = Random();
 
