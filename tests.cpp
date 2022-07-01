@@ -35,14 +35,14 @@ int main(int argc, char const *argv[]){
 
     std::unordered_map<int,int> dist;
 
-    int total = 100000;
+    int total = 10000000;
     for(int i = 0; i < total; i++) {
         std::string random_peptide = gen_random(9);
-        std::string random_haplotype = gen_random(2000);
+        //std::string random_haplotype = gen_random(521894);
         std::string random_mhc_mol = gen_random(9);
 
         //const int merit = Helper::LevenshteinDistance(random_mhc_mol, random_peptide);
-        const int merit = Helper::generate_merit(random_mhc_mol, random_haplotype);
+        const int merit = Helper::generate_merit(random_mhc_mol, random_peptide);
 
         dist[merit]++;
     }
