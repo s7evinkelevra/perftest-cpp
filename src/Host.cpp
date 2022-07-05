@@ -5,13 +5,14 @@
 #include <iostream>
 #include "Host.h"
 
-Host::Host(int parentId1, double parentFitness1, int parentId2, double parentFitness2, int hostId, double initialFitness, int speciesId) {
+Host::Host(int parentId1, double parentFitness1, int parentId2, double parentFitness2, int hostId, double fitnessMinimum, int speciesId) {
     parent_id_1 = parentId1;
     parent_fitness_1 = parentFitness1;
     parent_id_2 = parentId2;
     parent_fitness_2 = parentFitness2;
     id = hostId;
-    fitness = initialFitness;
+    fitness = fitnessMinimum;
+    fitness_minimum = fitnessMinimum;
     species = speciesId;
     chromosome_1_allele_ids.reserve(20);
     chromosome_2_allele_ids.reserve(20);
@@ -36,9 +37,10 @@ void Host::print() {
 
 void Host::updateFitness() {
     if(antigen_presentation_count + no_antigen_presentation_count == 0){
-        fitness = 0;
+        fitness = fitness_minimum;
     }else{
-        fitness = (double)antigen_presentation_count / ((double)antigen_presentation_count + (double)no_antigen_presentation_count);
+        double new_fitness = (double)antigen_presentation_count / ((double)antigen_presentation_count + (double)no_antigen_presentation_count);
+        fitness = std::max(fitness_minimum, new_fitness);
     }
 }
 

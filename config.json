@@ -20,7 +20,7 @@
   "hosts": {
     "n": 10000,
     "species_n": 1,
-    "initial_fitness": -1,
+    "fitness_minimum": 0.001,
     "alleles_per_species_initial": 100,
     "allele_sequence_length": 9,
     "genes_per_chromosome_initial": 1,
@@ -29,7 +29,7 @@
   "pathogens": {
     "n": 10000,
     "species_n": 4,
-    "initial_fitness": -1,
+    "fitness_minimum": 0.001,
     "haplotypes_per_species_initial": 10,
     "haplotype_sequence_length": 2000,
     "mutation_rate_per_peptide": 0.00003

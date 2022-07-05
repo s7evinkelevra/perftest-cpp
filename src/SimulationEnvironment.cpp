@@ -74,7 +74,7 @@ void SimulationEnvironment::initializeHostPool() {
     hostPool.max_loci_count = 1;
     hostPool.hosts.resize(config["hosts"]["species_n"]);
     hostPool.fitness_sum.resize(config["hosts"]["species_n"]);
-    int initialFitness = config["hosts"]["initial_fitness"];
+    int initialFitness = config["hosts"]["fitness_minimum"];
 
     for( int species_i = 0; species_i < config["hosts"]["species_n"]; species_i ++) {
         hostPool.hosts[species_i].reserve(config["hosts"]["n"]);
@@ -99,7 +99,7 @@ void SimulationEnvironment::initializeHostPool() {
 void SimulationEnvironment::initializePathogenPool() {
     pathogenPool.pathogens.resize(config["pathogens"]["species_n"]);
     pathogenPool.fitness_sum.resize(config["pathogens"]["species_n"]);
-    int initialFitness = config["pathogens"]["initial_fitness"];
+    int initialFitness = config["pathogens"]["fitness_minimum"];
 
     for( int species_i = 0; species_i < config["pathogens"]["species_n"]; species_i ++ ){
         pathogenPool.pathogens[species_i].reserve(config["pathogens"]["n"]);
@@ -291,7 +291,6 @@ void SimulationEnvironment::hostGeneration() {
     }
 
     // host reproduction
-    //TODO(JAN): test all this
     if(bHostFitnessproportionalReproduction){
         hostReproduction();
     }else{
@@ -385,103 +384,112 @@ void SimulationEnvironment::hostReproduction() {
         int selectedHosts = 0;
         int selectedParents = 0;
 
-        // create vector of hosts for this species
-        std::vector<Host> nextGenerationHosts;
-        nextGenerationHosts.reserve(hostPool.hosts[host_species_index].size());
+        // If evey individual has a fitness of 0, the roulette wheel selection automatically selected the first individual in the loop for reproduction
+        // resulting in only that individual with that certain allele/haplotype reproducing
+        if(hostPool.fitness_sum[host_species_index] == 0) {
+            hostReproductionRandomPerSpecies(host_species_index);
+        }else{
+            // create vector of hosts for this species
+            std::vector<Host> nextGenerationHosts;
+            nextGenerationHosts.reserve(hostPool.hosts[host_species_index].size());
 
-        unsigned int hostIdBase = hostPool.hosts[host_species_index].size() * totalHostGenerations;
+            unsigned int hostIdBase = hostPool.hosts[host_species_index].size() * totalHostGenerations;
 
-        //std::cout << "species total fitness: " << hostPool.fitness_sum[host_species_index] << std::endl;
-        // need to select double the hosts -> two parents per new host
-        while(selectedParents < hostPool.hosts[host_species_index].size() * 2){
+            //std::cout << "species total fitness: " << hostPool.fitness_sum[host_species_index] << std::endl;
+            // need to select double the hosts -> two parents per new host
+            while(selectedParents < hostPool.hosts[host_species_index].size() * 2){
 
-            // select first parent
-            dice = rng.sampleRealUniDouble(0, hostPool.fitness_sum[host_species_index]);
-            int parent_1_id;
-            for(int host_i = 0; host_i < hostPool.hosts[host_species_index].size(); host_i++){
-                totalTries++;
-                dice = dice - hostPool.hosts[host_species_index][host_i].fitness;
-                if(dice <= 0){
-                    parent_1_id = host_i;
-                    selectedParents++;
-                    break;
+                // select first parent
+                dice = rng.sampleRealUniDouble(0, hostPool.fitness_sum[host_species_index]);
+                int parent_1_id;
+                for(int host_i = 0; host_i < hostPool.hosts[host_species_index].size(); host_i++){
+                    totalTries++;
+                    dice = dice - hostPool.hosts[host_species_index][host_i].fitness;
+                    if(dice <= 0){
+                        parent_1_id = host_i;
+                        selectedParents++;
+                        break;
+                    }
                 }
-            }
 
-            // select second parent
-            dice = rng.sampleRealUniDouble(0, hostPool.fitness_sum[host_species_index]);
-            int parent_2_id;
-            for(int host_i = 0; host_i < hostPool.hosts[host_species_index].size(); host_i++){
-                totalTries++;
-                dice = dice - hostPool.hosts[host_species_index][host_i].fitness;
-                if(dice <= 0){
-                    parent_2_id = host_i;
-                    selectedParents++;
-                    break;
+                // select second parent
+                dice = rng.sampleRealUniDouble(0, hostPool.fitness_sum[host_species_index]);
+                int parent_2_id;
+                for(int host_i = 0; host_i < hostPool.hosts[host_species_index].size(); host_i++){
+                    totalTries++;
+                    dice = dice - hostPool.hosts[host_species_index][host_i].fitness;
+                    if(dice <= 0){
+                        parent_2_id = host_i;
+                        selectedParents++;
+                        break;
+                    }
                 }
+
+                selectedHosts++;
+
+                Host& parent_1 = hostPool.hosts[host_species_index][parent_1_id];
+                Host& parent_2 = hostPool.hosts[host_species_index][parent_2_id];
+                nextGenerationHosts.emplace_back(Host(parent_1.id, parent_1.fitness, parent_2.id, parent_2.fitness, hostIdBase + selectedHosts, config["hosts"]["fitness_minimum"], host_species_index));
+                Host& nextGenerationHost = nextGenerationHosts.back();
+
+                if(rng.sampleRealUniFloat(0, 1) < 0.5){
+                    nextGenerationHost.chromosome_1_allele_ids = parent_1.chromosome_1_allele_ids;
+                }else{
+                    nextGenerationHost.chromosome_1_allele_ids = parent_1.chromosome_2_allele_ids;
+                }
+
+                if(rng.sampleRealUniFloat(0, 1) < 0.5){
+                    nextGenerationHost.chromosome_2_allele_ids = parent_2.chromosome_1_allele_ids;
+                }else{
+                    nextGenerationHost.chromosome_2_allele_ids = parent_2.chromosome_2_allele_ids;
+                }
+
             }
 
-            selectedHosts++;
-
-            Host& parent_1 = hostPool.hosts[host_species_index][parent_1_id];
-            Host& parent_2 = hostPool.hosts[host_species_index][parent_2_id];
-            nextGenerationHosts.emplace_back(Host(parent_1.id, parent_1.fitness, parent_2.id, parent_2.fitness, hostIdBase + selectedHosts, config["hosts"]["initial_fitness"], host_species_index));
-            Host& nextGenerationHost = nextGenerationHosts.back();
-
-            if(rng.sampleRealUniFloat(0, 1) < 0.5){
-                nextGenerationHost.chromosome_1_allele_ids = parent_1.chromosome_1_allele_ids;
-            }else{
-                nextGenerationHost.chromosome_1_allele_ids = parent_1.chromosome_2_allele_ids;
-            }
-
-            if(rng.sampleRealUniFloat(0, 1) < 0.5){
-                nextGenerationHost.chromosome_2_allele_ids = parent_2.chromosome_1_allele_ids;
-            }else{
-                nextGenerationHost.chromosome_2_allele_ids = parent_2.chromosome_2_allele_ids;
-            }
-
+            hostPool.hosts[host_species_index] = nextGenerationHosts;
         }
-
-        hostPool.hosts[host_species_index] = nextGenerationHosts;
     }
 }
 
 //TODO(JAN): test this
 void SimulationEnvironment::hostReproductionRandom() {
     for(int host_species_index = 0; host_species_index < hostPool.hosts.size(); host_species_index++){
-
-        unsigned int host_pop_size = hostPool.hosts[host_species_index].size();
-        // create vector of hosts for this species
-        std::vector<Host> nextGenerationHosts;
-        nextGenerationHosts.reserve(host_pop_size);
-
-        unsigned int hostIdBase = hostPool.hosts[host_species_index].size() * totalHostGenerations;
-
-        for(int new_host_i = 0; new_host_i < host_pop_size; new_host_i++){
-            unsigned int parent_1_id = rng.sampleIntUniUnsignedInt(0, host_pop_size - 1);
-            unsigned int parent_2_id = rng.sampleIntUniUnsignedInt(0, host_pop_size - 1);
-
-            Host& parent_1 = hostPool.hosts[host_species_index][parent_1_id];
-            Host& parent_2 = hostPool.hosts[host_species_index][parent_2_id];
-
-            nextGenerationHosts.emplace_back(Host(parent_1_id, parent_1.fitness, parent_2_id, parent_2.fitness, hostIdBase + new_host_i, config["hosts"]["initial_fitness"], host_species_index));
-            Host& nextGenerationHost = nextGenerationHosts.back();
-
-
-            if(rng.sampleRealUniFloat(0,1) < 0.5){
-                nextGenerationHost.chromosome_1_allele_ids = parent_1.chromosome_1_allele_ids;
-            }else{
-                nextGenerationHost.chromosome_1_allele_ids = parent_1.chromosome_2_allele_ids;
-            }
-
-            if(rng.sampleRealUniFloat(0,1) < 0.5){
-                nextGenerationHost.chromosome_2_allele_ids = parent_2.chromosome_1_allele_ids;
-            }else{
-                nextGenerationHost.chromosome_2_allele_ids = parent_2.chromosome_2_allele_ids;
-            }
-        }
-        hostPool.hosts[host_species_index] = nextGenerationHosts;
+        hostReproductionRandomPerSpecies(host_species_index);
     }
+}
+
+void SimulationEnvironment::hostReproductionRandomPerSpecies(int host_species_index) {
+    unsigned int host_pop_size = hostPool.hosts[host_species_index].size();
+    // create vector of hosts for this species
+    std::vector<Host> nextGenerationHosts;
+    nextGenerationHosts.reserve(host_pop_size);
+
+    unsigned int hostIdBase = hostPool.hosts[host_species_index].size() * totalHostGenerations;
+
+    for(int new_host_i = 0; new_host_i < host_pop_size; new_host_i++){
+        unsigned int parent_1_id = rng.sampleIntUniUnsignedInt(0, host_pop_size - 1);
+        unsigned int parent_2_id = rng.sampleIntUniUnsignedInt(0, host_pop_size - 1);
+
+        Host& parent_1 = hostPool.hosts[host_species_index][parent_1_id];
+        Host& parent_2 = hostPool.hosts[host_species_index][parent_2_id];
+
+        nextGenerationHosts.emplace_back(Host(parent_1_id, parent_1.fitness, parent_2_id, parent_2.fitness, hostIdBase + new_host_i, config["hosts"]["fitness_minimum"], host_species_index));
+        Host& nextGenerationHost = nextGenerationHosts.back();
+
+
+        if(rng.sampleRealUniFloat(0, 1) < 0.5){
+            nextGenerationHost.chromosome_1_allele_ids = parent_1.chromosome_1_allele_ids;
+        }else{
+            nextGenerationHost.chromosome_1_allele_ids = parent_1.chromosome_2_allele_ids;
+        }
+
+        if(rng.sampleRealUniFloat(0, 1) < 0.5){
+            nextGenerationHost.chromosome_2_allele_ids = parent_2.chromosome_1_allele_ids;
+        }else{
+            nextGenerationHost.chromosome_2_allele_ids = parent_2.chromosome_2_allele_ids;
+        }
+    }
+    hostPool.hosts[host_species_index] = nextGenerationHosts;
 }
 
 
@@ -594,28 +602,35 @@ void SimulationEnvironment::pathogenReproduction() {
     for(int patho_species_index = 0; patho_species_index < pathogenPool.pathogens.size(); patho_species_index++){
         int selectedPathogens = 0;
 
-        // create vector of pathogens for this species
-        std::vector<Pathogen> nextGenerationPathogens;
-        nextGenerationPathogens.reserve(pathogenPool.pathogens[patho_species_index].size());
+        // If evey individual has a fitness of 0, the roulette wheel selection automatically selected the first individual in the loop for reproduction
+        // resulting in only that individual with that certain allele/haplotype reproducing
+        if(pathogenPool.fitness_sum[patho_species_index] == 0){
+            pathogenReproductionRandomPerSpecies(patho_species_index);
+        }else{
+            // create vector of pathogens for this species
+            std::vector<Pathogen> nextGenerationPathogens;
+            nextGenerationPathogens.reserve(pathogenPool.pathogens[patho_species_index].size());
 
-        unsigned int pathogenIdBase = pathogenPool.pathogens[patho_species_index].size() * totalPathogenGenerations;
+            unsigned int pathogenIdBase = pathogenPool.pathogens[patho_species_index].size() * totalPathogenGenerations;
 
-        //std::cout << "species total fitness: " << pathogenPool.fitness_sum[patho_species_index] << std::endl;
-        while(selectedPathogens < pathogenPool.pathogens[patho_species_index].size()){
-            dice = rng.sampleRealUniDouble(0, pathogenPool.fitness_sum[patho_species_index]);
+            //std::cout << "species total fitness: " << pathogenPool.fitness_sum[patho_species_index] << std::endl;
+            while(selectedPathogens < pathogenPool.pathogens[patho_species_index].size()){
+                dice = rng.sampleRealUniDouble(0, pathogenPool.fitness_sum[patho_species_index]);
 
-            for(auto & pathogen : pathogenPool.pathogens[patho_species_index]){
-                totalTries++;
-                dice = dice - pathogen.fitness;
-                if(dice <= 0){
-                    nextGenerationPathogens.emplace_back(Pathogen(pathogen.id, pathogenIdBase + selectedPathogens, config["pathogens"]["initial_fitness"], patho_species_index, pathogen.haplotype_id));
-                    selectedPathogens++;
-                    break;
+                for(auto & pathogen : pathogenPool.pathogens[patho_species_index]){
+                    totalTries++;
+                    dice = dice - pathogen.fitness;
+                    if(dice <= 0){
+                        nextGenerationPathogens.emplace_back(Pathogen(pathogen.id, pathogenIdBase + selectedPathogens, config["pathogens"]["fitness_minimum"], patho_species_index, pathogen.haplotype_id));
+                        selectedPathogens++;
+                        break;
+                    }
                 }
             }
+
+            pathogenPool.pathogens[patho_species_index] = nextGenerationPathogens;
         }
 
-        pathogenPool.pathogens[patho_species_index] = nextGenerationPathogens;
     }
 
     //std::cout << "total tries: " << totalTries << std::endl;
@@ -623,25 +638,25 @@ void SimulationEnvironment::pathogenReproduction() {
 
 void SimulationEnvironment::pathogenReproductionRandom() {
     for(int patho_species_index = 0; patho_species_index < pathogenPool.pathogens.size(); patho_species_index++){
+        pathogenReproductionRandomPerSpecies(patho_species_index);
+    }
+}
 
-        // create vector of pathogens for this species
-        std::vector<Pathogen> nextGenerationPathogens;
-        unsigned int pathogen_pop_size = pathogenPool.pathogens[patho_species_index].size();
-        nextGenerationPathogens.reserve(pathogen_pop_size);
+void SimulationEnvironment::pathogenReproductionRandomPerSpecies(int patho_species_index) {// create vector of pathogens for this species
+    std::vector<Pathogen> nextGenerationPathogens;
+    unsigned int pathogen_pop_size = pathogenPool.pathogens[patho_species_index].size();
+    nextGenerationPathogens.reserve(pathogen_pop_size);
 
-        unsigned int pathogenIdBase = pathogenPool.pathogens[patho_species_index].size() * totalPathogenGenerations;
+    unsigned int pathogenIdBase = pathogenPool.pathogens[patho_species_index].size() * totalPathogenGenerations;
 
 
-        for(int new_pathogen_i = 0; new_pathogen_i < pathogen_pop_size; new_pathogen_i++){
-            int parent_id = rng.sampleIntUniUnsignedInt(0, pathogen_pop_size - 1);
-            Pathogen& pathogen_parent = pathogenPool.pathogens[patho_species_index][parent_id];
-            nextGenerationPathogens.emplace_back(Pathogen(parent_id, pathogenIdBase + new_pathogen_i, config["pathogens"]["initial_fitness"], patho_species_index, pathogen_parent.haplotype_id));
-        }
-
-        pathogenPool.pathogens[patho_species_index] = nextGenerationPathogens;
+    for(int new_pathogen_i = 0; new_pathogen_i < pathogen_pop_size; new_pathogen_i++){
+        int parent_id = rng.sampleIntUniUnsignedInt(0, pathogen_pop_size - 1);
+        Pathogen& pathogen_parent = pathogenPool.pathogens[patho_species_index][parent_id];
+        nextGenerationPathogens.emplace_back(Pathogen(parent_id, pathogenIdBase + new_pathogen_i, config["pathogens"]["fitness_minimum"], patho_species_index, pathogen_parent.haplotype_id));
     }
 
-
+    pathogenPool.pathogens[patho_species_index] = nextGenerationPathogens;
 }
 
 void SimulationEnvironment::infection() {

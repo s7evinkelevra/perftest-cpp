@@ -120,6 +120,8 @@ public:
 
     void hostReproductionRandom();
 
+    void hostReproductionRandomPerSpecies(int host_species_index);
+
     void hostMutation();
 
     void hostGeneration();
@@ -130,7 +132,11 @@ public:
 
     void pathogenReproductionRandom();
 
+    void pathogenReproductionRandomPerSpecies(int patho_species_index);
+
     void pathogenMutation();
+
+
 };
 
 

@@ -7,11 +7,12 @@
 #include <utility>
 #include <iostream>
 
-Pathogen::Pathogen(int parentId, int pathogenId, double initialFitness, int speciesId, int pathogenHaplotypeId) {
+Pathogen::Pathogen(int parentId, int pathogenId, double fitnessMinimum, int speciesId, int pathogenHaplotypeId) {
     parent_id = parentId;
     id = pathogenId;
     species = speciesId;
-    fitness = initialFitness;
+    fitness = fitnessMinimum;
+    fitness_minimum = fitnessMinimum;
     haplotype_id = pathogenHaplotypeId;
 
     infection_count = 0;
@@ -24,9 +25,10 @@ void Pathogen::print() {
 
 void Pathogen::updateFitness() {
     if(infection_count + no_infection_count == 0){
-        fitness = 0;
+        fitness = fitness_minimum;
     }else{
-        fitness = (double)infection_count / ((double)infection_count + (double)no_infection_count);
+        double new_fitness = (double)infection_count / ((double)infection_count + (double)no_infection_count);
+        fitness = std::max(fitness_minimum, new_fitness);
     }
 }
 

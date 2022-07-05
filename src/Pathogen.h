@@ -9,10 +9,11 @@
 
 class Pathogen {
 public:
-    Pathogen(int parentId, int pathogenId, double initialFitness, int speciesId, int pathogenHaplotypeId);
+    Pathogen(int parentId, int pathogenId, double fitnessMinimum, int speciesId, int pathogenHaplotypeId);
     int parent_id;
     int id;
     double fitness;
+    double fitness_minimum;
     int species;
     int haplotype_id;
 

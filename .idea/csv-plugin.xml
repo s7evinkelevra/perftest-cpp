@@ -94,6 +94,20 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\cmake-build-release\output\config-163\meta_data.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\cmake-build-release\output\config-163\pathogen_data.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value=";" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\output-16\pathogen_genome_data.csv">
           <value>
             <Attribute>
