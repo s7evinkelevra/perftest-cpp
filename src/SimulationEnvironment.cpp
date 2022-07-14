@@ -742,7 +742,7 @@ void SimulationEnvironment::setDefaultMode() {
 }
 
 void SimulationEnvironment::setBurnInMode() {
-    bInfection = false;
+    bInfection = true;
     bHostFitnessproportionalReproduction = false;
     bPathogenFitnessproportionalReproduction = false;
     bHostMutation = true;
