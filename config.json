@@ -1,5 +1,5 @@
 {
-  "configId": 163,
+  "configId": 723,
   "thread_n": 32,
   "simulation_mode": "default",
   "burnin_generations": 100,
@@ -20,19 +20,21 @@
   "hosts": {
     "n": 10000,
     "species_n": 1,
-    "fitness_minimum": 0.001,
-    "alleles_per_species_initial": 100,
+    "fitness_minimum": 0.01,
+    "alleles_per_species_initial": 10,
     "allele_sequence_length": 9,
     "genes_per_chromosome_initial": 1,
-    "mutation_rate_per_peptide": 0.0000000414
+    "mutation_rate_per_peptide": 0.000005,
+    "introgression_individuals_per_generation": 0
   },
   "pathogens": {
     "n": 10000,
-    "species_n": 4,
-    "fitness_minimum": 0.001,
-    "haplotypes_per_species_initial": 10,
+    "species_n": 1,
+    "fitness_minimum": 0.1,
+    "haplotypes_per_species_initial": 1,
     "haplotype_sequence_length": 2000,
-    "mutation_rate_per_peptide": 0.00003
+    "mutation_rate_per_peptide": 0.000005,
+    "introgression_individuals_per_generation": 0
   },
   "infection": {
     "infections_per_generation": 10,

@@ -306,6 +306,8 @@ void SimulationEnvironment::hostGeneration() {
         std::cout << "host mutation done.\n";
     }
 
+    hostIntrogression();
+
 
     int host_allele_data_interval = config["output"]["host_allele_data_interval"];
     if(host_allele_data_interval != -1 && totalHostGenerations % host_allele_data_interval == 0){
@@ -370,6 +372,28 @@ void SimulationEnvironment::hostMutation() {
                 unsigned long newAlleleId = hostAllelePool.addAllele(host_species_index, alleleId, totalHostGenerations, newSequence);
                 alleleId = (int)newAlleleId;
 
+            }
+
+        }
+    }
+}
+
+void SimulationEnvironment::hostIntrogression() {
+    int introgression_count = config["hosts"]["introgression_individuals_per_generation"];
+    if(introgression_count <= 0) return;
+
+    for(int host_species_index = 0; host_species_index < hostPool.hosts.size(); host_species_index++){
+        for(int host_i = 0; host_i < introgression_count; host_i++){
+            Host& currentHost = hostPool.hosts[host_species_index][host_i];
+
+            for(int& alleleId : currentHost.chromosome_1_allele_ids){
+                int newAlleleId = (int)hostAllelePool.addAllele(host_species_index, -2, totalHostGenerations, generateSequence(config["hosts"]["allele_sequence_length"]));
+                alleleId = (int)newAlleleId;
+            }
+
+            for(int& alleleId : currentHost.chromosome_2_allele_ids){
+                int newAlleleId = (int)hostAllelePool.addAllele(host_species_index, -2, totalHostGenerations, generateSequence(config["hosts"]["allele_sequence_length"]));
+                alleleId = (int)newAlleleId;
             }
 
         }
@@ -528,6 +552,7 @@ void SimulationEnvironment::pathogenGeneration() {
         std::cout << "pathogen mutation done.\n";
     }
 
+    pathogenIntrogression();
 
     int pathogen_allele_data_interval = config["output"]["pathogen_allele_data_interval"];
     if(pathogen_allele_data_interval != -1 && totalPathogenGenerations % pathogen_allele_data_interval == 0){
@@ -587,6 +612,21 @@ void SimulationEnvironment::pathogenMutation() {
                 }
             }
             */
+        }
+    }
+}
+
+void SimulationEnvironment::pathogenIntrogression() {
+    int introgression_count = config["pathogens"]["introgression_individuals_per_generation"];
+    int haplotype_length = config["pathogens"]["haplotype_sequence_length"];
+    if(introgression_count <= 0) return;
+
+    for(int patho_species_index = 0; patho_species_index < pathogenPool.pathogens.size(); patho_species_index++){
+        for(int patho_i = 0; patho_i < introgression_count; patho_i ++){
+            Pathogen& currentPathogen = pathogenPool.pathogens[patho_species_index][patho_i];
+
+            unsigned long newHaplotypeId = pathogenAllelePool.addAllele(patho_species_index, -2, totalPathogenGenerations, generateSequence(haplotype_length));
+            currentPathogen.haplotype_id = (int)newHaplotypeId;
         }
     }
 }
@@ -1022,4 +1062,6 @@ void SimulationEnvironment::purgeUnusedAlleles(){
     }
 
 }
+
+
 

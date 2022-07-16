@@ -124,6 +124,8 @@ public:
 
     void hostMutation();
 
+    void hostIntrogression();
+
     void hostGeneration();
 
     void infection();
@@ -135,6 +137,8 @@ public:
     void pathogenReproductionRandomPerSpecies(int patho_species_index);
 
     void pathogenMutation();
+
+    void pathogenIntrogression();
 
 
 };
