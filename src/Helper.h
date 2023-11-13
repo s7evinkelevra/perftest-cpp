@@ -47,6 +47,8 @@ namespace Helper{
 
     int generate_merit(std::string_view allele, std::string_view haplotype);
 
+    std::vector<std::string> split(std::string_view s, char delimiter);
+
 }
 
 

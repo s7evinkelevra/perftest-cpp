@@ -5,6 +5,7 @@
 #include "Helper.h"
 #include <omp.h>
 #include <iostream>
+#include <sstream>
 
 std::string Helper::gen_random(const int len) {
     static const char AS[] =
@@ -34,4 +35,15 @@ int Helper::generate_merit(std::string_view allele, std::string_view haplotype){
     }
 
     return lowest_edit_distance;
+}
+
+std::vector<std::string> Helper::split(std::string_view s, char delimiter) {
+    std::vector<std::string> tokens;
+    std::string token;
+    std::istringstream tokenStream(s.data());
+    while (std::getline(tokenStream, token, delimiter))
+    {
+        tokens.push_back(token);
+    }
+    return tokens;
 }
