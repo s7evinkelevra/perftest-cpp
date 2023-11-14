@@ -284,12 +284,6 @@ void SimulationEnvironment::hostGeneration() {
     // necessary for logging
     hostPool.updateFitness();
 
-    int host_individual_data_interval = config["output"]["host_individual_data_interval"];
-    if(host_individual_data_interval != -1 && totalHostGenerations % host_individual_data_interval == 0){
-        writeHostData();
-        writeHostGenomeData();
-    }
-
     // host reproduction
     if(bHostFitnessproportionalReproduction){
         hostReproduction();
@@ -308,6 +302,11 @@ void SimulationEnvironment::hostGeneration() {
 
     hostIntrogression();
 
+    int host_individual_data_interval = config["output"]["host_individual_data_interval"];
+    if(host_individual_data_interval != -1 && totalHostGenerations % host_individual_data_interval == 0){
+        writeHostData();
+        writeHostGenomeData();
+    }
 
     int host_allele_data_interval = config["output"]["host_allele_data_interval"];
     if(host_allele_data_interval != -1 && totalHostGenerations % host_allele_data_interval == 0){
@@ -531,13 +530,6 @@ void SimulationEnvironment::pathogenGeneration() {
     // calculate fitness of hosts/pathogens and their sums after infection took place
     pathogenPool.updateFitness();
 
-    int pathogen_individual_data_interval = config["output"]["pathogen_individual_data_interval"];
-
-    if(pathogen_individual_data_interval != -1 && totalPathogenGenerations % pathogen_individual_data_interval == 0){
-        writePathogenData();
-        writePathogenGenomeData();
-    }
-
     if(bPathogenFitnessproportionalReproduction){
         pathogenReproduction();
     }else{
@@ -553,6 +545,13 @@ void SimulationEnvironment::pathogenGeneration() {
     }
 
     pathogenIntrogression();
+
+    int pathogen_individual_data_interval = config["output"]["pathogen_individual_data_interval"];
+
+    if(pathogen_individual_data_interval != -1 && totalPathogenGenerations % pathogen_individual_data_interval == 0){
+        writePathogenData();
+        writePathogenGenomeData();
+    }
 
     int pathogen_allele_data_interval = config["output"]["pathogen_allele_data_interval"];
     if(pathogen_allele_data_interval != -1 && totalPathogenGenerations % pathogen_allele_data_interval == 0){
