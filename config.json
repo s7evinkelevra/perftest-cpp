@@ -1,8 +1,8 @@
 {
-  "configId": 723,
+  "configId": 1475,
   "thread_n": 32,
-  "simulation_mode": "default",
-  "burnin_generations": 100,
+  "simulation_mode": "no_coevolution",
+  "burnin_generations": 0,
   "generations": 100,
   "aminoacids": "ARNDCQGEHILKMFPSTWYV",
   "output": {
@@ -24,7 +24,7 @@
     "alleles_per_species_initial": 10,
     "allele_sequence_length": 9,
     "genes_per_chromosome_initial": 1,
-    "mutation_rate_per_peptide": 0.000005,
+    "mutation_rate_per_peptide": 4.14e-8,
     "introgression_individuals_per_generation": 0
   },
   "pathogens": {
@@ -33,11 +33,27 @@
     "fitness_minimum": 0.1,
     "haplotypes_per_species_initial": 1,
     "haplotype_sequence_length": 2000,
-    "mutation_rate_per_peptide": 0.000005,
-    "introgression_individuals_per_generation": 0
+    "mutation_rate_per_peptide": 0.00003,
+    "introgression_individuals_per_generation": 500
   },
   "infection": {
     "infections_per_generation": 10,
-    "merit_threshold": 4
+    "merit_threshold": 5
+  },
+  "initialization": {
+    "hosts": {
+      "load_from_disk": true,
+      "generation": 200,
+      "allele_sequence_data_path": "./output/config-1474/host_allele_sequence_data.csv",
+      "individual_data_path": "./output/config-1474/host_data.csv",
+      "individual_genome_data_path": "./output/config-1474/host_genome_data.csv"
+    },
+    "pathogens": {
+      "load_from_disk": true,
+      "generation": 2000,
+      "allele_sequence_data_path": "./output/config-1474/pathogen_allele_sequence_data.csv",
+      "individual_data_path": "./output/config-1474/pathogen_data.csv",
+      "individual_genome_data_path": "./output/config-1474/pathogen_genome_data.csv"
+    }
   }
 }
