@@ -44,6 +44,11 @@ private:
     std::unique_ptr<CSVWriter> metaDataCSV;
 
 
+    void loadHostAllelePoolFromFile(int target_generation, const std::string& allele_data_path);
+    void loadPathogenAllelePoolFromFile(int target_generation, const std::string& allele_data_path);
+    void loadHostPoolFromFile(int target_generation, const std::string& host_data_path, const std::string& host_genome_data_path);
+    void loadPathogenPoolFromFile(int target_generation, const std::string& pathogen_data_path, const std::string& pathogen_genome_data_path);
+
     void initializeHostAllelePool();
     void initializePathogenAllelePool();
     void initializeMeritCache();

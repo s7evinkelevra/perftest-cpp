@@ -44,6 +44,46 @@ void SimulationEnvironment::initializeHostAllelePool() {
     }
 }
 
+void SimulationEnvironment::loadHostAllelePoolFromFile(int target_generation,const std::string& allele_data_path) {
+    // initialize allele pool
+    hostAllelePool.alleles.resize(config["hosts"]["species_n"]);
+    hostAllelePool.total_allele_counts_per_species.resize(config["hosts"]["species_n"]);
+
+    // initialize total allele counts (-> gets updated in add_allele)
+    for( int species_i = 0; species_i < config["hosts"]["species_n"]; species_i ++ ){
+        hostAllelePool.total_allele_counts_per_species[species_i] = 0;
+    }
+
+    // load csv file
+    std::ifstream allele_data_file(allele_data_path);
+    if(!allele_data_file.is_open()){
+        throw std::runtime_error("could not open host allele data file");
+    }
+
+    // skip header
+    std::string line;
+    std::getline(allele_data_file, line);
+
+    // read data
+    while(std::getline(allele_data_file, line)){
+        std::vector<std::string> row = Helper::split(line, ';');
+
+        int generation = std::stoi(row[0]);
+        if(generation != target_generation) continue;
+        if(generation > target_generation) break;
+
+        int species = std::stoi(row[1]);
+        int parent_id = std::stoi(row[2]);
+        int allele_id = std::stoi(row[3]);
+        int created_at = std::stoi(row[4]);
+        std::string sequence = row[5];
+
+        hostAllelePool.alleles[species].emplace(allele_id, Allele(parent_id, allele_id, created_at, sequence));
+        hostAllelePool.total_allele_counts_per_species[species]++;
+    }
+}
+
+
 void SimulationEnvironment::initializePathogenAllelePool() {
     pathogenAllelePool.alleles.resize(config["pathogens"]["species_n"]);
     pathogenAllelePool.total_allele_counts_per_species.resize(config["pathogens"]["species_n"]);
@@ -66,9 +106,50 @@ void SimulationEnvironment::initializeMeritCache() {
                     meritCache.set(host_species_i, hostAllele.id, patho_species_i, pathogenAllele.id, levDistance);
                 }
             }
+            std::cout << "initialized merit cache for host allele " << hostAllele.id << std::endl;
         }
+        std::cout << "initialized merit cache for host species " << host_species_i << std::endl;
     }
 };
+
+void SimulationEnvironment::loadPathogenAllelePoolFromFile(int target_generation, const std::string &allele_data_path) {
+    // initialize allele pool
+    pathogenAllelePool.alleles.resize(config["pathogens"]["species_n"]);
+    pathogenAllelePool.total_allele_counts_per_species.resize(config["pathogens"]["species_n"]);
+
+    // initialize total allele counts (-> gets updated in add_allele)
+    for( int species_i = 0; species_i < config["pathogens"]["species_n"]; species_i ++ ){
+        pathogenAllelePool.total_allele_counts_per_species[species_i] = 0;
+    }
+
+    // load csv file
+    std::ifstream allele_data_file(allele_data_path);
+    if(!allele_data_file.is_open()){
+        throw std::runtime_error("could not open pathogen allele data file");
+    }
+
+    // skip header
+    std::string line;
+    std::getline(allele_data_file, line);
+
+    // read data
+    while(std::getline(allele_data_file, line)){
+        std::vector<std::string> row = Helper::split(line, ';');
+
+        int generation = std::stoi(row[0]);
+        if(generation != target_generation) continue;
+        if(generation > target_generation) break;
+
+        int species = std::stoi(row[1]);
+        int parent_id = std::stoi(row[2]);
+        int allele_id = std::stoi(row[3]);
+        int created_at = std::stoi(row[4]);
+        std::string sequence = row[5];
+
+        pathogenAllelePool.alleles[species].emplace(allele_id, Allele(parent_id, allele_id, created_at, sequence));
+        pathogenAllelePool.total_allele_counts_per_species[species]++;
+    }
+}
 
 void SimulationEnvironment::initializeHostPool() {
     hostPool.max_loci_count = 1;
@@ -96,6 +177,102 @@ void SimulationEnvironment::initializeHostPool() {
     }
 }
 
+
+void SimulationEnvironment::loadHostPoolFromFile(int target_generation, const std::string &host_data_path, const std::string &host_genome_data_path) {
+    hostPool.hosts.resize(config["hosts"]["species_n"]);
+    hostPool.fitness_sum.resize(config["hosts"]["species_n"]);
+    int initialFitness = config["hosts"]["fitness_minimum"];
+
+    // load csv file
+    std::ifstream host_data_file(host_data_path);
+    std::ifstream host_genome_data_file(host_genome_data_path);
+
+    if(!host_data_file.is_open()){
+        throw std::runtime_error("could not open host data file");
+    }
+
+    if(!host_genome_data_file.is_open()){
+        throw std::runtime_error("could not open host genome data file");
+    }
+
+    // load genome data into data structure
+    // key: {species_id}_{host_id}
+    // -> contains a vector of allele ids of that chromosome (matching the hosts data structure). Index in the vector is the locus id
+    std::unordered_map<std::string, std::vector<int>> chromosome_1_allele_id_map;
+    std::unordered_map<std::string, std::vector<int>> chromosome_2_allele_id_map;
+
+    // skip header
+    std::string line;
+    std::getline(host_genome_data_file, line);
+
+    int max_loci_count = 0;
+    while(std::getline(host_genome_data_file, line)){
+        std::vector<std::string> row = Helper::split(line, ';');
+
+        int generation = std::stoi(row[0]);
+        if(generation != target_generation) continue;
+        if(generation > target_generation) break;
+
+        int species = std::stoi(row[1]);
+        int host_id = std::stoi(row[2]);
+        int locus_id = std::stoi(row[3]);
+        int allele_1_id = std::stoi(row[4]);
+        int allele_2_id = std::stoi(row[5]);
+
+        std::string key = std::to_string(species) + "_" + std::to_string(host_id);
+        std::vector<int>& chromosome_1 = chromosome_1_allele_id_map[key];
+        std::vector<int>& chromosome_2 = chromosome_2_allele_id_map[key];
+
+        if(chromosome_1.size() < locus_id + 1){
+            chromosome_1.resize(locus_id + 1);
+        }
+        if(chromosome_2.size() < locus_id + 1){
+            chromosome_2.resize(locus_id + 1);
+        }
+
+        if(locus_id > max_loci_count){
+            max_loci_count = locus_id;
+        }
+
+        chromosome_1[locus_id] = allele_1_id;
+        chromosome_2[locus_id] = allele_2_id;
+    }
+
+    hostPool.max_loci_count = max_loci_count;
+
+    std::getline(host_data_file, line);
+    // read data
+    while(std::getline(host_data_file, line)){
+        std::vector<std::string> row = Helper::split(line, ';');
+
+        int generation = std::stoi(row[0]);
+        if(generation != target_generation) continue;
+        if(generation > target_generation) break;
+
+        // check if mappings are correct
+        int species = std::stoi(row[1]);
+        int host_id = std::stoi(row[2]);
+        int parent_1_id = std::stoi(row[3]);
+        int parent_2_id = std::stoi(row[4]);
+
+        std::string key = std::to_string(species) + "_" + std::to_string(host_id);
+        std::vector<int>& chromosome_1 = chromosome_1_allele_id_map[key];
+        std::vector<int>& chromosome_2 = chromosome_2_allele_id_map[key];
+
+        if(chromosome_1.size() != chromosome_2.size()){
+            throw std::runtime_error("chromosome sizes do not match");
+        }
+
+        // add host to host pool
+        Host& host = hostPool.hosts[species].emplace_back(Host(parent_1_id, initialFitness, parent_2_id, 0, host_id, 0, species));
+
+        // copy chromosomes
+        host.chromosome_1_allele_ids = chromosome_1;
+        host.chromosome_2_allele_ids = chromosome_2;
+    }
+}
+
+
 void SimulationEnvironment::initializePathogenPool() {
     pathogenPool.pathogens.resize(config["pathogens"]["species_n"]);
     pathogenPool.fitness_sum.resize(config["pathogens"]["species_n"]);
@@ -114,6 +291,69 @@ void SimulationEnvironment::initializePathogenPool() {
         }
     }
 }
+
+
+void SimulationEnvironment::loadPathogenPoolFromFile(int target_generation, const std::string &pathogen_data_path, const std::string &pathogen_genome_data_path) {
+    pathogenPool.pathogens.resize(config["pathogens"]["species_n"]);
+    pathogenPool.fitness_sum.resize(config["pathogens"]["species_n"]);
+    int initialFitness = config["pathogens"]["fitness_minimum"];
+
+    // load csv file
+    std::ifstream pathogen_data_file(pathogen_data_path);
+    std::ifstream pathogen_genome_data_file(pathogen_genome_data_path);
+
+    if(!pathogen_data_file.is_open()){
+        throw std::runtime_error("could not open pathogen data file");
+    }
+
+    if(!pathogen_genome_data_file.is_open()){
+        throw std::runtime_error("could not open pathogen genome data file");
+    }
+
+    // load genome data into data structure
+    // key: {species_id}_{host_id}
+    // -> contains a vector of allele ids of that chromosome (matching the hosts data structure). Index in the vector is the locus id
+    std::unordered_map<std::string, int> haplotype_id_map;
+
+    // skip header
+    std::string line;
+    std::getline(pathogen_genome_data_file, line);
+
+    while(std::getline(pathogen_genome_data_file, line)){
+        std::vector<std::string> row = Helper::split(line, ';');
+
+        int generation = std::stoi(row[0]);
+        if(generation != target_generation) continue;
+        if(generation > target_generation) break;
+
+        int species = std::stoi(row[1]);
+        int pathogen_id = std::stoi(row[2]);
+        int haplotype_id = std::stoi(row[3]);
+
+        std::string key = std::to_string(species) + "_" + std::to_string(pathogen_id);
+        haplotype_id_map[key] = haplotype_id;
+    }
+
+    std::getline(pathogen_data_file, line);
+    // read data
+    while(std::getline(pathogen_data_file, line)){
+        std::vector<std::string> row = Helper::split(line, ';');
+
+        int generation = std::stoi(row[0]);
+        if(generation != target_generation) continue;
+        if(generation > target_generation) break;
+
+        int species = std::stoi(row[1]);
+        int pathogen_id = std::stoi(row[2]);
+        int parent_id = std::stoi(row[3]);
+
+        std::string key = std::to_string(species) + "_" + std::to_string(pathogen_id);
+
+        // add host to pathogen pool
+        Pathogen& pathogen = pathogenPool.pathogens[species].emplace_back(Pathogen(parent_id, pathogen_id, initialFitness, species, haplotype_id_map[key]));
+    }
+}
+
 
 void SimulationEnvironment::initializeOutputFiles() {
     // create CSV writers and files
@@ -211,14 +451,39 @@ void SimulationEnvironment::printPathogen(int species, int index){
 
 
 void SimulationEnvironment::initialize() {
-    initializeHostAllelePool();
-    initializePathogenAllelePool();
+
+    if(config["initialization"]["hosts"]["load_from_disk"]) {
+        loadHostAllelePoolFromFile(config["initialization"]["hosts"]["generation"], config["initialization"]["hosts"]["allele_sequence_data_path"]);
+        std::cout << "loaded host allele pool from disk" << std::endl;
+    }else{
+        initializeHostAllelePool();
+    }
+
+    if(config["initialization"]["pathogens"]["load_from_disk"]) {
+        loadPathogenAllelePoolFromFile(config["initialization"]["pathogens"]["generation"], config["initialization"]["pathogens"]["allele_sequence_data_path"]);
+        std::cout << "loaded pathogen allele pool from disk" << std::endl;
+    }else{
+        initializePathogenAllelePool();
+    }
 
     // after burn-in, none of the originial alleles are left anyways...
     initializeMeritCache();
 
-    initializeHostPool();
-    initializePathogenPool();
+    if(config["initialization"]["hosts"]["load_from_disk"]) {
+        loadHostPoolFromFile(config["initialization"]["hosts"]["generation"], config["initialization"]["hosts"]["individual_data_path"], config["initialization"]["hosts"]["individual_genome_data_path"]);
+        std::cout << "loaded host data from disk" << std::endl;
+        totalHostGenerations = config["initialization"]["hosts"]["generation"];
+    }else{
+        initializeHostPool();
+    }
+
+    if(config["initialization"]["pathogens"]["load_from_disk"]) {
+        loadPathogenPoolFromFile(config["initialization"]["pathogens"]["generation"], config["initialization"]["pathogens"]["individual_data_path"], config["initialization"]["pathogens"]["individual_genome_data_path"]);
+        std::cout << "loaded pathogen data from disk" << std::endl;
+        totalPathogenGenerations = config["initialization"]["pathogens"]["generation"];
+    }else{
+        initializePathogenPool();
+    }
 
     initializeOutputFiles();
     writeAllData();
