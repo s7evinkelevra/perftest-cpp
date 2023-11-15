@@ -452,14 +452,14 @@ void SimulationEnvironment::printPathogen(int species, int index){
 
 void SimulationEnvironment::initialize() {
 
-    if(config["initialization"]["hosts"]["load_from_disk"]) {
+    if(config.contains("initialization") && config["initialization"].contains("hosts") && config["initialization"]["hosts"]["load_from_disk"]) {
         loadHostAllelePoolFromFile(config["initialization"]["hosts"]["generation"], config["initialization"]["hosts"]["allele_sequence_data_path"]);
         std::cout << "loaded host allele pool from disk" << std::endl;
     }else{
         initializeHostAllelePool();
     }
 
-    if(config["initialization"]["pathogens"]["load_from_disk"]) {
+    if(config.contains("initialization") && config["initialization"].contains("pathogens") && config["initialization"]["pathogens"]["load_from_disk"]) {
         loadPathogenAllelePoolFromFile(config["initialization"]["pathogens"]["generation"], config["initialization"]["pathogens"]["allele_sequence_data_path"]);
         std::cout << "loaded pathogen allele pool from disk" << std::endl;
     }else{
@@ -469,7 +469,7 @@ void SimulationEnvironment::initialize() {
     // after burn-in, none of the originial alleles are left anyways...
     initializeMeritCache();
 
-    if(config["initialization"]["hosts"]["load_from_disk"]) {
+    if(config.contains("initialization") && config["initialization"].contains("hosts") && config["initialization"]["hosts"]["load_from_disk"]) {
         loadHostPoolFromFile(config["initialization"]["hosts"]["generation"], config["initialization"]["hosts"]["individual_data_path"], config["initialization"]["hosts"]["individual_genome_data_path"]);
         std::cout << "loaded host data from disk" << std::endl;
         totalHostGenerations = config["initialization"]["hosts"]["generation"];
@@ -477,7 +477,7 @@ void SimulationEnvironment::initialize() {
         initializeHostPool();
     }
 
-    if(config["initialization"]["pathogens"]["load_from_disk"]) {
+    if(config.contains("initialization") && config["initialization"].contains("pathogens") && config["initialization"]["pathogens"]["load_from_disk"]) {
         loadPathogenPoolFromFile(config["initialization"]["pathogens"]["generation"], config["initialization"]["pathogens"]["individual_data_path"], config["initialization"]["pathogens"]["individual_genome_data_path"]);
         std::cout << "loaded pathogen data from disk" << std::endl;
         totalPathogenGenerations = config["initialization"]["pathogens"]["generation"];
