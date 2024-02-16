@@ -565,7 +565,18 @@ void SimulationEnvironment::hostGeneration() {
         std::cout << "host mutation done.\n";
     }
 
-    hostIntrogression();
+    // "introgression_individuals_per_generation" has been split into two separate parameters to allow for controlling the interval of introgression
+    // to keep compatibility, the old parameter is still supported
+    nlohmann::json config_host = config["hosts"];
+    if (config_host.contains("introgression_individuals") && config_host.contains("introgression_interval")) {
+        int host_introgression_interval = config["hosts"]["introgression_interval"];
+        if(host_introgression_interval != -1 && totalHostGenerations % host_introgression_interval == 0){
+            hostIntrogression();
+        }
+    } else {
+        hostIntrogression();
+    }
+    std::cout << "host introgression done.\n";
 
     int host_individual_data_interval = config["output"]["host_individual_data_interval"];
     if(host_individual_data_interval != -1 && totalHostGenerations % host_individual_data_interval == 0){
@@ -643,7 +654,16 @@ void SimulationEnvironment::hostMutation() {
 }
 
 void SimulationEnvironment::hostIntrogression() {
-    int introgression_count = config["hosts"]["introgression_individuals_per_generation"];
+    nlohmann::json config_host = config["hosts"];
+
+    int introgression_count;
+    if (config_host.contains("introgression_individuals")) {
+        introgression_count = config_host["introgression_individuals"];
+    } else {
+        // crashes when prop does not exist
+        introgression_count = config_host["introgression_individuals_per_generation"];
+    }
+
     if(introgression_count <= 0) return;
 
     for(int host_species_index = 0; host_species_index < hostPool.hosts.size(); host_species_index++){
@@ -809,7 +829,18 @@ void SimulationEnvironment::pathogenGeneration() {
         std::cout << "pathogen mutation done.\n";
     }
 
-    pathogenIntrogression();
+    // "introgression_individuals_per_generation" has been split into two separate parameters to allow for controlling the interval of introgression
+    // to keep compatibility, the old parameter is still supported
+    nlohmann::json config_pathogens = config["pathogens"];
+    if (config_pathogens.contains("introgression_individuals") && config_pathogens.contains("introgression_interval")) {
+        int pathogens_introgression_interval = config_pathogens["introgression_interval"];
+        if(pathogens_introgression_interval != -1 && totalPathogenGenerations % pathogens_introgression_interval == 0){
+            pathogenIntrogression();
+        }
+    } else {
+        pathogenIntrogression();
+    }
+    std::cout << "pathogen introgression done.\n";
 
     int pathogen_individual_data_interval = config["output"]["pathogen_individual_data_interval"];
 
@@ -881,7 +912,16 @@ void SimulationEnvironment::pathogenMutation() {
 }
 
 void SimulationEnvironment::pathogenIntrogression() {
-    int introgression_count = config["pathogens"]["introgression_individuals_per_generation"];
+    nlohmann::json config_pathogens = config["pathogens"];
+
+    int introgression_count;
+    if (config_pathogens.contains("introgression_individuals")) {
+        introgression_count = config_pathogens["introgression_individuals"];
+    } else {
+        // crashes when prop does not exist
+        introgression_count = config_pathogens["introgression_individuals_per_generation"];
+    }
+
     int haplotype_length = config["pathogens"]["haplotype_sequence_length"];
     if(introgression_count <= 0) return;
 
