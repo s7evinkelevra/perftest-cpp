@@ -81,7 +81,7 @@ For it to work, you need the following folders and files:
 - The executable simulation model at `$HOME/perftest-cpp/build/perftest_cpp`
 - A `$HOME/config-queue/` folder that contains the configs you want to run the model with. The config files should be numbered 1 to [number of instances you want to run] + the json file extension. For 6 instances (like below), the config folder thus should contain 6 config files named `1.json, 2.json, 3.json...6.json`
 
-To run it, need to go to your `$WORK` dir and then run `$HOME/<script_name>`.
+To run it, need to go to your `$WORK` dir and then run `sbatch $HOME/<script_name>`.
 
 ```bash
 #!/bin/bash
