@@ -1,0 +1,61 @@
+{
+  "configId": 1476,
+  "thread_n": 32,
+  "simulation_mode": "no_coevolution",
+  "burnin_generations": 100,
+  "generations": 100,
+  "aminoacids": "ARNDCQGEHILKMFPSTWYV",
+  "output": {
+    "output_base_path": "./output/",
+    "host_individual_data_interval": 50,
+    "pathogen_individual_data_interval": 500,
+    "host_allele_data_interval": 1,
+    "pathogen_allele_data_interval": 500,
+    "host_allele_sequence_data_interval": -1,
+    "pathogen_allele_sequence_data_interval": -1,
+    "host_locus_data_interval": 1,
+    "pathogen_locus_data_interval": 50,
+    "meta_data_interval": 1
+  },
+  "hosts": {
+    "n": 10000,
+    "species_n": 1,
+    "fitness_minimum": 0.01,
+    "alleles_per_species_initial": 10,
+    "allele_sequence_length": 9,
+    "genes_per_chromosome_initial": 1,
+    "mutation_rate_per_peptide": 4.14e-8,
+    "introgression_individuals": 50,
+    "introgression_interval": 1
+  },
+  "pathogens": {
+    "n": 10000,
+    "species_n": 1,
+    "fitness_minimum": 0.1,
+    "haplotypes_per_species_initial": 1,
+    "haplotype_sequence_length": 2000,
+    "mutation_rate_per_peptide": 0.00003,
+    "introgression_individuals": 500,
+    "introgression_interval": 10
+  },
+  "infection": {
+    "infections_per_generation": 10,
+    "merit_threshold": 5
+  },
+  "initialization": {
+    "hosts": {
+      "load_from_disk": true,
+      "generation": 200,
+      "allele_sequence_data_path": "./output/config-1474/host_allele_sequence_data.csv",
+      "individual_data_path": "./output/config-1474/host_data.csv",
+      "individual_genome_data_path": "./output/config-1474/host_genome_data.csv"
+    },
+    "pathogens": {
+      "load_from_disk": true,
+      "generation": 2000,
+      "allele_sequence_data_path": "./output/config-1474/pathogen_allele_sequence_data.csv",
+      "individual_data_path": "./output/config-1474/pathogen_data.csv",
+      "individual_genome_data_path": "./output/config-1474/pathogen_genome_data.csv"
+    }
+  }
+}
