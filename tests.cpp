@@ -23,38 +23,62 @@ std::string gen_random(const int len) {
     return tmp_s;
 }
 
-int main(int argc, char const *argv[]){
-    std::string a = "tester";
+void test_levenshtein(){
+    std::string a = "teste";
     std::string b = "testa";
 
+    std::cout << "levenshtein distance: " << Helper::LevenshteinDistance(a, b) << std::endl;
+}
+
+void test_hamming(){
+    std::string a = "teste";
+    std::string b = "testa";
+
+    std::cout << "hamming distance: " << Helper::HammingDistance(a, b) << std::endl;
+}
+
+int main(int argc, char const *argv[]){
     unsigned int threads_available = std::thread::hardware_concurrency();
     std::cout << "threads available: " << threads_available << "\n";
-    omp_set_num_threads(threads_available);
+    omp_set_num_threads((int)threads_available);
 
-    auto start_time = std::chrono::steady_clock::now();
+    test_levenshtein();
+    test_hamming();
 
-    std::unordered_map<int,int> dist;
+    const int N = 10000;
 
-    int total = 10000000;
-    for(int i = 0; i < total; i++) {
-        std::string random_peptide = gen_random(9);
-        //std::string random_haplotype = gen_random(521894);
-        std::string random_mhc_mol = gen_random(9);
+    long sum_lev = 0;
 
-        //const int merit = Helper::LevenshteinDistance(random_mhc_mol, random_peptide);
-        const int merit = Helper::generate_merit(random_mhc_mol, random_peptide);
+    for(int i = 0; i < N; i++) {
+        auto haplotype = gen_random(2000);
+        auto allele = gen_random(9);
+        auto start_lev = std::chrono::steady_clock::now();
 
-        dist[merit]++;
+        Helper::generate_merit(allele, haplotype);
+        auto end_lev = std::chrono::steady_clock::now();
+        sum_lev += std::chrono::duration_cast<std::chrono::microseconds>(end_lev - start_lev).count();
     }
 
-    for(const auto& item : dist) {
-        std::cout << "merit " << item.first << " -> " << item.second << " | " << (float)item.second / (float)total << std::endl;
+
+    long sum_hamming = 0;
+    for(int i = 0; i < N; i++) {
+        auto haplotype = gen_random(2000);
+        auto allele = gen_random(9);
+
+        auto start_hamming = std::chrono::steady_clock::now();
+        Helper::generate_merit_hamming(allele, haplotype);
+        auto end_hamming = std::chrono::steady_clock::now();
+        sum_hamming += std::chrono::duration_cast<std::chrono::microseconds>(end_hamming - start_hamming).count();
     }
 
-    auto end_time = std::chrono::steady_clock::now();
 
-    std::cout << "run time: "
-              << std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time).count()
-              << " ms" << std::endl;
+
+    std::cout << "lev run time: "
+              << sum_lev
+              << " us" << std::endl;
+
+    std::cout << "hamming run time: "
+              << sum_hamming
+              << " us" << std::endl;
 
 }
