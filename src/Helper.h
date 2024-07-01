@@ -43,9 +43,28 @@ namespace Helper{
         return lev_dist[min_size];
     }
 
+    template<typename T> inline
+    typename T::size_type HammingDistance(const T &source, const T &target) {
+        // won't happen
+        //if (source.size() != target.size()) {
+        //    throw std::invalid_argument("Hamming distance is only defined for strings of equal length");
+        //}
+
+        using TSizeType = typename T::size_type;
+        TSizeType distance = 0;
+        for (TSizeType i = 0; i < source.size(); ++i) {
+            if (source[i] != target[i]) {
+                ++distance;
+            }
+        }
+
+        return distance;
+    }
+
     std::string gen_random(const int len);
 
     int generate_merit(std::string_view allele, std::string_view haplotype);
+    int generate_merit_hamming(std::string_view allele, std::string_view hyplotype);
 
     std::vector<std::string> split(std::string_view s, char delimiter);
 

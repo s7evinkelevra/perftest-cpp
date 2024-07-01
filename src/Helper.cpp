@@ -37,6 +37,23 @@ int Helper::generate_merit(std::string_view allele, std::string_view haplotype){
     return lowest_edit_distance;
 }
 
+int Helper::generate_merit_hamming(std::string_view allele, std::string_view hyplotype) {
+    const size_t step_size = 1;
+    const size_t window_width = allele.length();
+
+    int lowest_hamming_distance = -1;
+    #pragma omp parallel for default(none) shared(lowest_hamming_distance, allele, hyplotype, window_width, step_size)
+    for(size_t i = 0; i < hyplotype.length() - window_width + step_size; i += step_size) {
+        std::string_view window = hyplotype.substr(i, window_width);
+        const size_t current_hamming_distance = HammingDistance(allele, window);
+        if(lowest_hamming_distance == -1 || lowest_hamming_distance > current_hamming_distance) {
+            lowest_hamming_distance = (int)current_hamming_distance;
+        }
+    }
+
+    return lowest_hamming_distance;
+}
+
 std::vector<std::string> Helper::split(std::string_view s, char delimiter) {
     std::vector<std::string> tokens;
     std::string token;
