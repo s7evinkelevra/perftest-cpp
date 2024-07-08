@@ -102,7 +102,7 @@ void SimulationEnvironment::initializeMeritCache() {
         for( auto & [host_allele_id, hostAllele] : hostAllelePool.alleles[host_species_i] ){
             for( int patho_species_i = 0; patho_species_i < config["pathogens"]["species_n"]; patho_species_i++ ){
                 for( auto &[pathogen_allele_id, pathogenAllele] : pathogenAllelePool.alleles[patho_species_i] ) {
-                    int levDistance = Helper::generate_merit(hostAllele.sequence, pathogenAllele.sequence);
+                    int levDistance = Helper::generate_merit_hamming(hostAllele.sequence, pathogenAllele.sequence);
                     meritCache.set(host_species_i, hostAllele.id, patho_species_i, pathogenAllele.id, levDistance);
                 }
             }
@@ -1025,7 +1025,7 @@ void SimulationEnvironment::infection() {
                     }else{
                         Allele& hostAllele = hostAllelePool.alleles[host_species_index].at(allele_id);
                         Allele& pathogenHaplotype = pathogenAllelePool.alleles[patho_species_index].at(selectedPathogen.haplotype_id);
-                        lev_dist = Helper::generate_merit(hostAllele.sequence, pathogenHaplotype.sequence);
+                        lev_dist = Helper::generate_merit_hamming(hostAllele.sequence, pathogenHaplotype.sequence);
                         meritCache.set(host_species_index, allele_id, patho_species_index, selectedPathogen.haplotype_id, lev_dist);
                     }
                     //std::cout << "lev dist: " << lev_dist << std::endl;
@@ -1040,7 +1040,7 @@ void SimulationEnvironment::infection() {
                     }else{
                         Allele& hostAllele = hostAllelePool.alleles[host_species_index].at(allele_id);
                         Allele& pathogenHaplotype = pathogenAllelePool.alleles[patho_species_index].at(selectedPathogen.haplotype_id);
-                        lev_dist = Helper::generate_merit(hostAllele.sequence, pathogenHaplotype.sequence);
+                        lev_dist = Helper::generate_merit_hamming(hostAllele.sequence, pathogenHaplotype.sequence);
                         meritCache.set(host_species_index, allele_id, patho_species_index, selectedPathogen.haplotype_id, lev_dist);
                     }
                     //std::cout << "lev dist: " << lev_dist << std::endl;
